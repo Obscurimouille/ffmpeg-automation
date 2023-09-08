@@ -1,2 +1,3 @@
-# typescript-app
-Template for Typescript app
+# FFMPEG Automation
+
+A typescript project to automate the process of media editing using FFMPEG.

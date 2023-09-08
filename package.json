@@ -1,7 +1,7 @@
 {
-    "name": "typescript-app",
+    "name": "ffmpeg-automation",
     "version": "1.0.0",
-    "description": "Template for Typescript app",
+    "description": "A typescript project to automate the process of media editing using FFMPEG",
     "main": "index.js",
     "scripts": {
         "start": "nodemon src/index.ts",
@@ -12,8 +12,14 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "nodemon": "^3.0.1",
-        "typescript": "^5.2.2"
+        "typescript": "^5.2.2",
+        "ts-node": "^10.9.1",
+        "nodemon": "^3.0.1"
     },
-    "dependencies": {}
+    "dependencies": {
+        "@types/ffmpeg-static": "^3.0.1",
+		"@types/fluent-ffmpeg": "^2.1.21",
+		"ffmpeg-static": "^5.2.0",
+		"fluent-ffmpeg": "^2.1.2"
+    }
 }
