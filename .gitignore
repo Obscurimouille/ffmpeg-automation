@@ -1,5 +1,9 @@
 # App
-media/
+/ressources
+/workspace
+
+# Documentation
+/documentation/*.bkp
 
 # Logs
 logs
