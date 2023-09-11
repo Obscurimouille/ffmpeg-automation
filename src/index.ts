@@ -1,7 +1,7 @@
 import { RessourceService } from "./services/ressources/ressource.service";
-import { PipelineModelService } from "./services/pipeline-model/pipeline-model.service";
 import { FfmpegService } from "./services/ffmpeg/ffmpeg.service";
 import { Pipeline } from "./classes/pipeline";
+import { PipelineParser } from "./classes/pipeline-parser";
 
 async function main(): Promise<void> {
 
@@ -14,16 +14,11 @@ async function main(): Promise<void> {
         process.exit(1);
     }
 
-    let pipelineModel;
-
-    try {
-        pipelineModel = PipelineModelService.parse(pipelineModelFile);
-        // PipelineModelService.check(pipelineModel);
-    }
-    catch (error: any) {
-        console.error("Error:", error.message);
+    const parser = new PipelineParser(pipelineModelFile);
+    const pipelineModel = parser.run((errorMessage) => {
+        console.error("Error:", errorMessage);
         process.exit(1);
-    }
+    });
 
     RessourceService.clearOutputDirectory();
 

@@ -1,5 +1,6 @@
 import { FfmpegCommand } from "../../services/ffmpeg/ffmpeg.service";
 import { PipelineInstructionRequirements } from "../../types/pipeline-instructions-requirements";
+import { PipelineInstructionArgsModel } from "../../types/pipeline-model";
 
 /**
  * A pipeline instruction.
@@ -9,11 +10,11 @@ export class PipelineInstruction {
     public static readonly IDENTIFIER: string;
     public static readonly REQUIREMENTS: PipelineInstructionRequirements;
 
-    protected args: any[];
+    protected args: PipelineInstructionArgsModel;
     protected inputFiles?: string[];
     protected outputDir?: string;
 
-    constructor(args: any[]) {
+    constructor(args:PipelineInstructionArgsModel) {
         this.args = args;
     }
 

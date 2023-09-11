@@ -1,6 +1,7 @@
 import { PipelineInstruction } from "./pipeline-instruction";
 import { PipelineInstructionRequirements } from "../../types/pipeline-instructions-requirements";
 import { FfmpegCommand } from "../../services/ffmpeg/ffmpeg.service";
+import { PipelineInstructionArgsModel } from "../../types/pipeline-model";
 /**
  * Segment pipeline instruction.
  * - Export a segment of a video
@@ -18,18 +19,27 @@ export class Segment extends PipelineInstruction {
             nbFiles: 1,
             videoOnly: true
         },
+        arguments: {
+            startTime: {
+                type: "number"
+            },
+            duration: {
+                type: "number",
+                optional: true
+            }
+        },
         output: {
             nbFiles: 1,
         }
     };
 
-    constructor(args: any[]) {
+    constructor(args: PipelineInstructionArgsModel) {
         super(args);
     }
 
     protected override processCommand(command: FfmpegCommand): string[] {
-        const options = [`-ss ${this.args[0]}`];
-        if (this.args[1]) options.push("-t " + this.args[1]);
+        const options = [`-ss ${this.args.startTime}`];
+        if (this.args.duration) options.push("-t " + this.args.duration);
         const outputFile = this.outputDir! + "vid_1.mp4";
 
         command.input(this.inputFiles![0]);

@@ -5,6 +5,7 @@ import { SelectorService } from "../selector/selector.service";
 import { FileService } from "../utils/file/file.service";
 import { PipelineInstructionService } from "../pipeline-instruction/pipeline-instruction.service";
 import fs from 'fs';
+import { PipelineModelService } from "../pipeline-model/pipeline-model.service";
 
 export enum EnumInputResolution {
     STRING,
@@ -27,10 +28,11 @@ export class PipelineStepService {
     public static instanciateSteps(stepModels: PipelineStepModel[]): PipelineStep[] {
         let steps: PipelineStep[] = [];
         // Create a PipelineStep object for each step
-        for (let i = 0; i < stepModels.length; i++) {
-            const data = stepModels[i];
-            const instruction = PipelineInstructionService.instanciate(data.instruction);
-            steps.push(new PipelineStep(i + 1, data.input, instruction));
+        for (const step of stepModels) {
+            if (!PipelineModelService.isInstructionModel(step)) throw new Error('Step type not supported');
+
+            const instruction = PipelineInstructionService.instanciate(step);
+            steps.push(new PipelineStep(step.id, step.input, instruction));
         }
         return steps;
     }

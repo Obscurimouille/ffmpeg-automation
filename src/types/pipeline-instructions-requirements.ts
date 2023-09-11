@@ -4,6 +4,12 @@ export type PipelineInstructionRequirements = {
         videoOnly?: boolean;
         audioOnly?: boolean;
     },
+    arguments?: {
+        [key: string]: {
+            type: 'number' | 'string' | 'boolean';
+            optional?: boolean;
+        }
+    },
     output: {
         nbFiles: number | 'same' | 'undefined';
     }
