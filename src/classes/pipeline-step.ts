@@ -2,7 +2,7 @@ import { PipelineInstruction } from "./instructions/pipeline-instruction";
 import { PipelineStepService } from "../services/pipeline-step/pipeline-step.service";
 import { Subject } from "rxjs";
 import { WorkspaceService } from "../services/workspace/workspace.service";
-import { FfmpegService } from "../services/ffmpeg/ffmpeg.service";
+import { EnumStepType } from "../enums/enum-step-type";
 
 export enum EnumPipelineStepStatus {
     PENDING,         // The step has not been resolved yet
@@ -13,12 +13,18 @@ export enum EnumPipelineStepStatus {
 
 export class PipelineStep {
 
-    private _index: number;
-    private _rawInputs: string[];
+    public type!: EnumStepType;
+    public name!: string;
+    public id!: number;
+    public args!: any;
+
+    /* -------------------------------------------------------------------------- */
+
+    private _rawInputs: string[] = [];
     private _inputs: string[] = [];
     private _workspaceDir: string;
     private _pendingInputs: Promise<string[]>[] = [];
-    private _instruction: PipelineInstruction;
+    private _instruction?: PipelineInstruction;
     private _status: EnumPipelineStepStatus = EnumPipelineStepStatus.PENDING;
     private _statusChanged: Subject<EnumPipelineStepStatus> = new Subject<EnumPipelineStepStatus>();
     private _processEnded: Subject<string[]> = new Subject<string[]>();
@@ -29,33 +35,33 @@ export class PipelineStep {
      * @param inputs The raw inputs of the step (before resolution)
      * @param instruction The instruction of the step
      */
-    constructor(index: number, inputs: string[], instruction: PipelineInstruction) {
-        console.log(`Creating step ${index}...`);
-        this._index = index;
-        this._rawInputs = inputs;
-        this._instruction = instruction;
+    constructor(id: number, type: EnumStepType, name: string, args: any) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+        this.args = args;
 
         // Create a workspace folder
-        this._workspaceDir = WorkspaceService.createStepFolder(this.index);
+        this._workspaceDir = WorkspaceService.createStepFolder(this.id);
     }
 
 
     public async run(): Promise<void> {
         // Wait until the step is resolved
-        await this.waitForStatus(EnumPipelineStepStatus.RESOLVED);
+        // await this.waitForStatus(EnumPipelineStepStatus.RESOLVED);
 
-        console.log(`Running step ${this.index}...`);
+        // console.log(`Running step ${this.id}...`);
 
-        this.setStatus(EnumPipelineStepStatus.PROCESSING);
+        // this.setStatus(EnumPipelineStepStatus.PROCESSING);
 
-        const outputDir = this._workspaceDir + 'output/';
-        const outputFiles = await FfmpegService.process(this._inputs, this._instruction, outputDir);
-        this._processEnded.next(outputFiles);
-        this.setStatus(EnumPipelineStepStatus.ENDED);
+        // const outputDir = this._workspaceDir + 'output/';
+        // const outputFiles = await FfmpegService.process(this._inputs, this._instruction, outputDir);
+        // this._processEnded.next(outputFiles);
+        // this.setStatus(EnumPipelineStepStatus.ENDED);
     }
 
     public startResolution(otherSteps: PipelineStep[]): void {
-        console.log(`Resolving step ${this.index}...`);
+        console.log(`Resolving step ${this.id}...`);
 
         // For each raw input, resolve it to a file path or a step index
         for (const rawInput of this._rawInputs) {
@@ -71,10 +77,10 @@ export class PipelineStep {
                 // The result is a step index so we have to wait for the step to be resolved
                 else if (typeof result === 'number') {
                     // Find the step associated with the received index
-                    const associatedStep = PipelineStepService.findStepByIndex(otherSteps, result);
+                    const associatedStep = PipelineStepService.findStepById(otherSteps, result);
 
                     if (!associatedStep) {
-                        throw new Error(`Step ${this.index} could not find step ${result}`);
+                        throw new Error(`Step ${this.id} could not find step ${result}`);
                     }
                     // Add a promise to the array of promises to be resolved
                     this._pendingInputs.push(new Promise<string[]>((resolve) => {
@@ -120,10 +126,6 @@ export class PipelineStep {
 
     public get processEnded(): Subject<string[]> {
         return this._processEnded;
-    }
-
-    public get index(): number {
-        return this._index;
     }
 
 }

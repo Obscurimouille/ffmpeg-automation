@@ -19,7 +19,7 @@ export class FfmpegService {
         return new Promise<string[]>((resolve, reject) => {
             const command = ffmpeg();
             // Add command parameters and get output files
-            instruction.setStepData(inputFiles, outputDir);
+            // instruction.setStepData(inputFiles, outputDir);
             const outputFiles = instruction.decorateCommand(command);
 
             command

@@ -14,4 +14,18 @@ export class UtilsService {
         }
     }
 
+    /**
+     * Check if the given value is part of the given enum.
+     * @param value The value to check
+     * @param enumType The enum to check
+     * @returns True if the value is part of the enum, false otherwise
+     */
+    public static isPartOfEnum<T>(value: any, enumType: T): boolean {
+        if (typeof enumType === 'object' && enumType !== null) {
+            // Check if enumType is an object (an enum) and not null
+            return Object.values(enumType as Record<string, any>).includes(value);
+        }
+        return false;
+    }
+
 }
