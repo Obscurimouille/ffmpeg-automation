@@ -1,14 +1,14 @@
 import { WorkspaceService } from "../services/workspace/workspace.service";
 import { PipelineStep } from "./pipeline-step";
 import { PipelineService } from "../services/pipeline/pipeline.service";
-import { PipelineModelDTO } from "./dtos/pipeline-dto";
+import { PipelineDTO } from "./dtos/models/pipeline-dto";
 
 export class Pipeline {
 
-    private model: PipelineModelDTO
+    private model: PipelineDTO
     private steps: PipelineStep[] = [];
 
-    constructor(model: PipelineModelDTO) {
+    constructor(model: PipelineDTO) {
         this.model = model;
     }
 

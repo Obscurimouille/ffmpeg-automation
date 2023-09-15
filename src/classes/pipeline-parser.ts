@@ -1,7 +1,8 @@
 import 'reflect-metadata';
 import { ClassTransformService } from "../services/plain-to-class/plain-to-class.service";
-import { ValidationError } from 'class-validator';
-import { PipelineDTO } from './dtos/pipeline-dto';
+import { ValidationError, isNumber } from 'class-validator';
+import { PipelineDTO } from './dtos/models/pipeline-dto';
+import { InstructionArgsDTO } from './dtos/models/args-dto';
 
 type ErrorCallback = (message: string) => void;
 
@@ -19,31 +20,15 @@ export class PipelineParser {
 
         // Instanciate and validate pipeline DTO (without detailed instructions and statements)
         const pipelineDTO = ClassTransformService.plainToClass(PipelineDTO, json!);
-        ClassTransformService.validate(pipelineDTO, this.handleValidationError);
-
-        // // Instanciate instructions and statements DTOs
-        // pipelineDTO.steps = pipelineDTO.steps.map((step, index) => {
-        //     // Instanciate and validate step DTO
-        //     const stepDTO = PipelineDTOService.instanciateStepDTO(step);
-        //     console.log("stepDTO");
-        //     console.log(stepDTO);
-        //     ClassTransformService.validate(stepDTO, this.handleValidationError);
-        //     return stepDTO;
-        // });
-
-        console.log(pipelineDTO);
-
-        for (const step of pipelineDTO.steps) {
-            console.log(step);
-        }
+        ClassTransformService.validate(pipelineDTO, this.handleValidationErrors);
 
         return pipelineDTO;
     }
 
-    private handleValidationError(errors: ValidationError[]) {
+    private handleValidationErrors(errors: ValidationError[]) {
         console.log("Error in pipeline:");
         for (const error of errors) {
-            console.log(ClassTransformService.formatValidationError(error));
+            console.log(PipelineParser.formatValidationError(error));
         }
         process.exit(1);
     }
@@ -56,10 +41,44 @@ export class PipelineParser {
             if (!model) throw new Error();
         }
         catch (error) {
-            fail('Pipeline file is not valid JSON');
+            throw new Error('Pipeline file is not valid JSON');
         }
 
         return model;
+    }
+
+    /**
+     * Format a validation error.
+     * @param error The validation error to format.
+     * @returns The formatted validation error.
+     */
+    private static formatValidationError(error: ValidationError): string {
+        let content = ``;
+
+        if (error.value && !Array.isArray(error.value)) {
+            const id = error.value.id;
+            if (id && isNumber(id)) {
+                content += `> Step ${id}:\n`;
+            }
+        }
+
+        if (error.children && error.children.length > 0) {
+            for (const child of error.children) {
+                content += this.formatValidationError(child);
+            }
+        }
+        else {
+            for (const constraint in error.constraints) {
+                const message = error.constraints[constraint];
+                if (error.target instanceof InstructionArgsDTO) {
+                    content += `  - arguments: ${message}\n`;
+                }
+                else {
+                    content += `  - ${message}\n`;
+                }
+            }
+        }
+        return content;
     }
 
 }

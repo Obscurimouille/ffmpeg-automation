@@ -1,7 +1,7 @@
 import { ClassConstructor } from "class-transformer";
 import { PipelineInstruction } from "../../classes/instructions/pipeline-instruction";
 import { Segment } from "../../classes/instructions/segment/segment";
-import { InstructionDTO } from "../../classes/dtos/instruction-dto";
+import { InstructionDTO } from "../../classes/dtos/models/instruction-dto";
 
 export class PipelineInstructionService {
 

@@ -13,6 +13,8 @@ export enum EnumPipelineStepStatus {
 
 export class PipelineStep {
 
+    public static readonly IDENTIFIER: string;
+
     public type!: EnumStepType;
     public name!: string;
     public id!: number;

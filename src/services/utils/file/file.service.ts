@@ -42,6 +42,11 @@ export class FileService {
         return undefined;
     }
 
+    /**
+     * Copy a file to a new location.
+     * @param source The source file path
+     * @param destination The destination file path
+     */
     public static copyFile(source: string, destination: string): void {
         fs.copyFileSync(source, destination);
     }

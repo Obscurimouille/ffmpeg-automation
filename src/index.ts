@@ -6,17 +6,15 @@ async function main(): Promise<void> {
 
     FfmpegService.init();
 
-    const pipelineModelFile = RessourceService.getPipeline();
+    const pipelineFile = RessourceService.getPipeline();
 
-    if (!pipelineModelFile) {
-        console.error("Error: Could not find pipeline file");
-        process.exit(1);
+    if (!pipelineFile) {
+        throw new Error("Error: Could not find pipeline file");
     }
 
-    const parser = new PipelineParser(pipelineModelFile);
+    const parser = new PipelineParser(pipelineFile);
     const pipeline = parser.run((errorMessage) => {
-        console.error("Error:", errorMessage);
-        process.exit(1);
+        throw new Error(`Error: ${errorMessage}`);
     });
 
     RessourceService.clearOutputDirectory();
@@ -24,6 +22,7 @@ async function main(): Promise<void> {
     // const pipeline = new Pipeline(pipelineModel);
 
     console.log('\nStarting pipeline...');
+    // console.log(pipeline);
 
     // await pipeline.run();
 

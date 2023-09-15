@@ -1,13 +1,13 @@
-import { PipelineStep } from "../../classes/pipeline-step";
-import { RessourceService } from "../ressources/ressource.service";
-import { SelectorService } from "../selector/selector.service";
-import { FileService } from "../utils/file/file.service";
+import { PipelineStep } from '../../classes/pipeline-step';
+import { RessourceService } from '../ressources/ressource.service';
+import { SelectorService } from '../selector/selector.service';
+import { FileService } from '../utils/file/file.service';
 import fs from 'fs';
 
 export enum EnumInputResolution {
     STRING,
     STEP_INDEX,
-};
+}
 export type StepIndex = number;
 export type InputResolution = string[] | StepIndex[];
 
@@ -31,9 +31,8 @@ export class PipelineStepService {
             let selectorClass;
             try {
                 selectorClass = SelectorService.resolve(input);
-            }
-            catch (error: any) {
-                console.error("Error:", error.message);
+            } catch (error: any) {
+                console.error('Error:', error.message);
                 process.exit(1);
             }
 
@@ -67,5 +66,4 @@ export class PipelineStepService {
         }
         return null;
     }
-
 }

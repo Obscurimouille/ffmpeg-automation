@@ -30,24 +30,4 @@ export class ClassTransformService {
             });
     }
 
-    /**
-     * Format a validation error.
-     * @param error The validation error to format.
-     * @returns The formatted validation error.
-     */
-    public static formatValidationError(error: ValidationError): string {
-        let content = ``;
-        if (error.children && error.children.length > 0) {
-            for (const child of error.children) {
-                content += this.formatValidationError(child);
-            }
-        }
-        else {
-            for (const constraint in error.constraints) {
-                content += ` - ${error.constraints[constraint]}\n`;
-            }
-        }
-        return content;
-    }
-
 }
