@@ -1,25 +1,22 @@
 import { FfmpegCommand } from "../../services/ffmpeg/ffmpeg.service";
-import { PipelineInstructionRequirements } from "../../types/pipeline-instructions-requirements";
+import { EnumInstruction } from "../../enums/enum-instruction";
+import { PipelineStep } from "../pipeline-step";
+import { EnumStepType } from "../../enums/enum-step-type";
+import { InstructionArgsDTO } from "../dtos/models/args-dto";
 
 /**
  * A pipeline instruction.
  */
-export class PipelineInstruction {
+export class PipelineInstruction extends PipelineStep {
 
-    public static readonly IDENTIFIER: string;
-    public static readonly REQUIREMENTS: PipelineInstructionRequirements;
+    public static override readonly IDENTIFIER: EnumInstruction;
 
-    protected args: any[];
-    protected inputFiles?: string[];
-    protected outputDir?: string;
+    /* -------------------------------------------------------------------------- */
 
-    constructor(args: any[]) {
+    constructor(id: number, name: string, args: InstructionArgsDTO) {
+        console.log(`Creating instruction ${id}...`);
+        super(id, EnumStepType.INSTRUCTION, name, args);
         this.args = args;
-    }
-
-    public setStepData(inputFiles: string[], outputDir: string) {
-        this.inputFiles = inputFiles;
-        this.outputDir = outputDir;
     }
 
     /**
@@ -32,11 +29,12 @@ export class PipelineInstruction {
     }
 
     public decorateCommand(command: FfmpegCommand): string[] {
-        if (!this.inputFiles || !this.outputDir) {
-            throw new Error("Instruction data not set");
-        }
+        // if (!this.inputFiles || !this.outputDir) {
+        //     throw new Error("Instruction data not set");
+        // }
 
-        return this.processCommand(command);
+        // return this.processCommand(command);
+        return [];
     }
 
 }

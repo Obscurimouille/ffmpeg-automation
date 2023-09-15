@@ -1,28 +1,34 @@
+import { ClassConstructor } from "class-transformer";
 import { PipelineInstruction } from "../../classes/instructions/pipeline-instruction";
-import { Segment } from "../../classes/instructions/segment";
-import { PipelineStepInstructionModel } from "../../types/pipeline-model";
-import { PipelineInstructionRequirementsService } from "../pipeline-instruction-requirements/pipeline-instruction-requirements.service";
+import { Segment } from "../../classes/instructions/segment/segment";
+import { InstructionDTO } from "../../classes/dtos/models/instruction-dto";
 
 export class PipelineInstructionService {
 
-    private static INSTRUCTIONS: Record<string, typeof PipelineInstruction> = {
-        [Segment.IDENTIFIER]: Segment
+    private static INSTRUCTIONS: ClassConstructor<PipelineInstruction>[] = [
+        Segment
+    ];
+
+    /**
+     * Resolve an instruction model to an instruction class.
+     * @param name The instruction name to resolve
+     * @returns The instruction class
+     */
+    public static resolve(name: string): ClassConstructor<PipelineInstruction> {
+        const instructionClass = this.INSTRUCTIONS.find((instruction: ClassConstructor<PipelineInstruction>) => name == (instruction as any).IDENTIFIER);
+        if (!instructionClass) throw new Error(`Instruction ${name} not found`);
+        return instructionClass;
     }
 
     /**
      * Resolve an instruction model to an instruction class.
-     * @param instructionName The instruction name to resolve
+     * @param name The instruction name to resolve
      * @returns The instruction class
      */
-    public static resolve(instructionName: string): typeof PipelineInstruction {
-
-        const instructionClass = this.INSTRUCTIONS[instructionName];
-
-        if (!instructionClass) {
-            throw new Error(`Instruction ${instructionName} not found`);
-        }
-
-        return instructionClass;
+    public static resolveModel(name: string): ClassConstructor<InstructionDTO> {
+        const instructionClass = this.INSTRUCTIONS.find((instruction: ClassConstructor<PipelineInstruction>) => name == (instruction as any).IDENTIFIER);
+        if (!instructionClass) throw new Error(`Instruction ${name} not found`);
+        return (instructionClass as any).DTO;
     }
 
     /**
@@ -30,26 +36,9 @@ export class PipelineInstructionService {
      * @param instructionModel The instruction model to instanciate
      * @returns The instruction instance
      */
-    public static instanciate(instructionModel: PipelineStepInstructionModel): PipelineInstruction {
-        const instructionClass = this.resolve(instructionModel.name);
-        return new instructionClass(instructionModel.args);
-    }
-
-    /**
-     * Check if the given instruction has all the requirements.
-     * @param instruction The instruction to check
-     * @param inputFiles The input files to check
-     * @throws Error if the instruction does not have all the requirements
-     */
-    public static checkRequirements(instruction: typeof PipelineInstruction, inputFiles: string[]): void {
-        const requirements = instruction.REQUIREMENTS;
-
-        try {
-            PipelineInstructionRequirementsService.checkRequirements(requirements, inputFiles);
-        }
-        catch (err: any) {
-            throw new Error(`Instruction ${instruction.IDENTIFIER} failed requirements check: ${err.message}`);
-        }
-    }
+    // public static instanciate(instruction: PipelineInstructionModel): PipelineInstruction {
+    //     const instructionClass = this.resolve(instruction.instruction);
+    //     return new instructionClass(instruction.args);
+    // }
 
 }

@@ -1,15 +1,14 @@
-import { PipelineModel } from "../types/pipeline-model";
 import { WorkspaceService } from "../services/workspace/workspace.service";
 import { PipelineStep } from "./pipeline-step";
-import { PipelineStepService } from "../services/pipeline-step/pipeline-step.service";
 import { PipelineService } from "../services/pipeline/pipeline.service";
+import { PipelineDTO } from "./dtos/models/pipeline-dto";
 
 export class Pipeline {
 
-    private model: PipelineModel
+    private model: PipelineDTO
     private steps: PipelineStep[] = [];
 
-    constructor(model: PipelineModel) {
+    constructor(model: PipelineDTO) {
         this.model = model;
     }
 
@@ -17,7 +16,7 @@ export class Pipeline {
 
         WorkspaceService.clearWorkspace();
 
-        this.steps = PipelineStepService.instanciateSteps(this.model.steps);
+        // this.steps = PipelineStepService.instanciateSteps(this.model.steps);
 
         // Resolve each step
         for (const step of this.steps) {
