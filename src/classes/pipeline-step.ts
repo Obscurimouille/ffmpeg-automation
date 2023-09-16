@@ -1,5 +1,5 @@
 import { PipelineInstruction } from "./instructions/pipeline-instruction";
-import { PipelineStepService } from "../services/pipeline-step/pipeline-step.service";
+import { StepService } from "../services/step/step.service";
 import { Subject } from "rxjs";
 import { WorkspaceService } from "../services/workspace/workspace.service";
 import { EnumStepType } from "../enums/enum-step-type";
@@ -24,7 +24,7 @@ export class PipelineStep {
 
     private _rawInputs: string[] = [];
     private _inputs: string[] = [];
-    private _workspaceDir: string;
+    private _workspaceDir!: string;
     private _pendingInputs: Promise<string[]>[] = [];
     private _instruction?: PipelineInstruction;
     private _status: EnumPipelineStepStatus = EnumPipelineStepStatus.PENDING;
@@ -42,7 +42,9 @@ export class PipelineStep {
         this.type = type;
         this.name = name;
         this.args = args;
+    }
 
+    public init() {
         // Create a workspace folder
         this._workspaceDir = WorkspaceService.createStepFolder(this.id);
     }
@@ -68,7 +70,7 @@ export class PipelineStep {
         // For each raw input, resolve it to a file path or a step index
         for (const rawInput of this._rawInputs) {
 
-            const data = PipelineStepService.resolveInput(rawInput);
+            const data = StepService.resolveInput(rawInput);
 
             for (const result of data) {
 
@@ -79,7 +81,7 @@ export class PipelineStep {
                 // The result is a step index so we have to wait for the step to be resolved
                 else if (typeof result === 'number') {
                     // Find the step associated with the received index
-                    const associatedStep = PipelineStepService.findStepById(otherSteps, result);
+                    const associatedStep = StepService.findStepById(otherSteps, result);
 
                     if (!associatedStep) {
                         throw new Error(`Step ${this.id} could not find step ${result}`);
@@ -102,7 +104,7 @@ export class PipelineStep {
 
             // Next status
             this.setStatus(EnumPipelineStepStatus.RESOLVED);
-            this._inputs = PipelineStepService.moveInputFilesToWorkspace(this._inputs, this._workspaceDir);
+            this._inputs = StepService.moveInputFilesToWorkspace(this._inputs, this._workspaceDir);
         });
     }
 

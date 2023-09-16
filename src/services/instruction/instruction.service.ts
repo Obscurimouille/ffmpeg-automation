@@ -3,7 +3,7 @@ import { PipelineInstruction } from "../../classes/instructions/pipeline-instruc
 import { Segment } from "../../classes/instructions/segment/segment";
 import { InstructionDTO } from "../../classes/dtos/models/instruction-dto";
 
-export class PipelineInstructionService {
+export class InstructionService {
 
     private static INSTRUCTIONS: ClassConstructor<PipelineInstruction>[] = [
         Segment
@@ -30,15 +30,5 @@ export class PipelineInstructionService {
         if (!instructionClass) throw new Error(`Instruction ${name} not found`);
         return (instructionClass as any).DTO;
     }
-
-    /**
-     * Create an instruction instance from an instruction model.
-     * @param instructionModel The instruction model to instanciate
-     * @returns The instruction instance
-     */
-    // public static instanciate(instruction: PipelineInstructionModel): PipelineInstruction {
-    //     const instructionClass = this.resolve(instruction.instruction);
-    //     return new instructionClass(instruction.args);
-    // }
 
 }
