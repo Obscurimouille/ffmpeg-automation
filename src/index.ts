@@ -5,7 +5,7 @@ import { Pipeline } from "./classes/pipeline";
 
 async function main(): Promise<void> {
 
-    FfmpegService.init();
+    init();
 
     const pipelineFile = RessourceService.getPipeline();
 
@@ -25,6 +25,10 @@ async function main(): Promise<void> {
     await pipeline.run();
 
     console.log('Pipeline ended');
+}
+
+function init(): void {
+    FfmpegService.init();
 }
 
 main();

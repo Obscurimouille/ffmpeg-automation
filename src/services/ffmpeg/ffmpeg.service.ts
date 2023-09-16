@@ -1,7 +1,7 @@
 import ffmpeg from 'fluent-ffmpeg';
 import pathToFfmpeg from 'ffmpeg-static';
 
-export type FfmpegCommand = ffmpeg.FfmpegCommand;
+export type FfmpegCommandObject = ffmpeg.FfmpegCommand;
 
 export class FfmpegService {
 
@@ -14,14 +14,20 @@ export class FfmpegService {
         ffmpeg.setFfmpegPath(pathToFfmpeg);
     }
 
-    public static createCommand(): FfmpegCommand {
+    public static createCommand(): FfmpegCommandObject {
         return ffmpeg();
     }
 
-    private static addInputs(ffmpegCommand: FfmpegCommand, inputFiles: string[]): void {
-        for (const inputFile of inputFiles) {
-            ffmpegCommand.input(inputFile);
-        }
+    public static probe(file: string, onError: (error: any) => void): Promise<ffmpeg.FfprobeData> {
+        return new Promise((resolve, reject) => {
+            ffmpeg.ffprobe(file, (err, data) => {
+                if (err) {
+                    onError(err);
+                    resolve({} as ffmpeg.FfprobeData);
+                }
+                else resolve(data);
+            });
+        });
     }
 
 }
