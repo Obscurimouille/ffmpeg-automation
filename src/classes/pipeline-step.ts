@@ -11,7 +11,7 @@ export enum EnumPipelineStepStatus {
     ENDED            // The step has ended
 };
 
-export class PipelineStep {
+export abstract class PipelineStep {
 
     public static readonly IDENTIFIER: string;
 
@@ -23,13 +23,12 @@ export class PipelineStep {
     /* -------------------------------------------------------------------------- */
 
     private _rawInputs: string[] = [];
-    private _inputs: string[] = [];
-    private _workspaceDir!: string;
+    protected _inputs: string[] = [];
+    protected _workspaceDir!: string;
     private _pendingInputs: Promise<string[]>[] = [];
-    private _instruction?: PipelineInstruction;
     private _status: EnumPipelineStepStatus = EnumPipelineStepStatus.PENDING;
     private _statusChanged: Subject<EnumPipelineStepStatus> = new Subject<EnumPipelineStepStatus>();
-    private _processEnded: Subject<string[]> = new Subject<string[]>();
+    protected _processEnded: Subject<any> = new Subject<any>();
 
     /**
      * Create a new pipeline step.
@@ -42,6 +41,8 @@ export class PipelineStep {
         this.type = type;
         this.name = name;
         this.args = args;
+
+        if (this.args.input) this._rawInputs = this.args.input;
     }
 
     public init() {
@@ -49,24 +50,11 @@ export class PipelineStep {
         this._workspaceDir = WorkspaceService.createStepFolder(this.id);
     }
 
-
     public async run(): Promise<void> {
-        // Wait until the step is resolved
-        // await this.waitForStatus(EnumPipelineStepStatus.RESOLVED);
-
-        // console.log(`Running step ${this.id}...`);
-
-        // this.setStatus(EnumPipelineStepStatus.PROCESSING);
-
-        // const outputDir = this._workspaceDir + 'output/';
-        // const outputFiles = await FfmpegService.process(this._inputs, this._instruction, outputDir);
-        // this._processEnded.next(outputFiles);
-        // this.setStatus(EnumPipelineStepStatus.ENDED);
+        throw new Error("Method not implemented.");
     }
 
     public startResolution(otherSteps: PipelineStep[]): void {
-        console.log(`Resolving step ${this.id}...`);
-
         // For each raw input, resolve it to a file path or a step index
         for (const rawInput of this._rawInputs) {
 
@@ -108,21 +96,24 @@ export class PipelineStep {
         });
     }
 
+    /**
+     * Wait for the step to reach a specific status.
+     * @param status The status to wait for
+     * @returns A promise that resolves when the step reaches the specified status
+     */
     public waitForStatus(status: EnumPipelineStepStatus): Promise<void> {
         return new Promise<void>((resolve) => {
-            if (this._status === status) {
-                resolve();
-            }
-            else {
-                this._statusChanged.subscribe((newStatus) => {
-                    if (newStatus === status) {
-                        resolve();
-                    }
-                });
-            }
+            if (this._status === status) return resolve();
+            this._statusChanged.subscribe((newStatus) => {
+                if (newStatus === status) resolve();
+            });
         });
     }
 
+    /**
+     * Set the status of the step.
+     * @param status The new status of the step
+     */
     public setStatus(status: EnumPipelineStepStatus): void {
         this._status = status;
         this._statusChanged.next(status);

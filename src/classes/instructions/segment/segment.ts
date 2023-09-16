@@ -1,7 +1,8 @@
 import { PipelineInstruction } from "../pipeline-instruction";
-import { FfmpegCommand } from "../../../services/ffmpeg/ffmpeg.service";
 import { EnumInstruction } from "../../../enums/enum-instruction";
 import { SegmentArgsDTO } from "./segment-args";
+import { InputFile } from "../../../types/input-file";
+import { FfmpegService } from "../../../services/ffmpeg/ffmpeg.service";
 
 /**
  * Segment pipeline instruction.
@@ -20,17 +21,28 @@ export class Segment extends PipelineInstruction {
         super(id, EnumInstruction.SEGMENT, args);
     }
 
-    protected override processCommand(command: FfmpegCommand): string[] {
-        // const options = [`-ss ${this.args.startTime}`];
-        // if (this.args.duration) options.push("-t " + this.args.duration);
-        // const outputFile = this.outputDir! + "vid_1.mp4";
+    protected override FfmpegProcess(): Promise<InputFile[]> {
+        return new Promise((resolve, reject) => {
 
-        // command.input(this.inputFiles![0]);
-        // command.inputOptions(options);
-        // command.output(outputFile);
+            const cmd = FfmpegService.createCommand();
 
-        // return [outputFile];
-        return [];
+            const options = [`-ss ${this.args.startTime}`];
+            if (this.args.duration) options.push(`-t ${this.args.duration}`);
+
+            const inputFile = this._inputs[0];
+            const outputFile = this._workspaceOutputDir! + "segment-output.mp4";
+
+            cmd.input(inputFile)
+                .inputOptions(options)
+                .output(outputFile)
+                .on('end', () => {
+                    resolve([outputFile]);
+                })
+                .on('error', (err) => {
+                    reject(err);
+                })
+                .run();
+        });
     }
 
 }
