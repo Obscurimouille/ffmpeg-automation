@@ -1,6 +1,10 @@
+import { StepDTO } from '../../classes/dtos/models/step-dto';
 import { PipelineStep } from '../../classes/pipeline-step';
+import { EnumStepType } from '../../enums/enum-step-type';
+import { InstructionService } from '../instruction/instruction.service';
 import { RessourceService } from '../ressources/ressource.service';
 import { SelectorService } from '../selector/selector.service';
+import { StatementService } from '../statement/statement.service';
 import { FileService } from '../utils/file/file.service';
 import fs from 'fs';
 
@@ -11,10 +15,42 @@ export enum EnumInputResolution {
 export type StepIndex = number;
 export type InputResolution = string[] | StepIndex[];
 
-export class PipelineStepService {
+export class StepService {
 
     public static moveInputFilesToWorkspace(inputs: string[], workspaceDir: string): string[] {
         return FileService.relocateFiles(inputs, workspaceDir + 'input/');
+    }
+
+    /**
+     * Instanciate steps from step models.
+     * @param stepsDTO The step models to instanciate
+     * @returns The step instances (instructions or/and statements)
+     */
+    public static instanciateSteps(stepsDTO: StepDTO[]): PipelineStep[] {
+        let steps = [];
+        for (const dto of stepsDTO) {
+            steps.push(StepService.instanciateStep(dto));
+        }
+        return steps;
+    }
+
+    /**
+     * Instanciate a step from a step model.
+     * @param step The step model to instanciate
+     * @returns The step instance (instruction or statement)
+     */
+    public static instanciateStep(step: StepDTO): PipelineStep {
+        switch (step.type) {
+            case EnumStepType.INSTRUCTION:
+                const instructionClass = InstructionService.resolve(step.name);
+                return new instructionClass(step.id, step.args);
+
+            case EnumStepType.STATEMENT:
+                const statementClass = StatementService.resolve(step.name);
+                return new statementClass(step.id, step.args);
+
+            default: throw new Error(`Unknown step type ${step.type}`);
+        }
     }
 
     /**
@@ -54,16 +90,17 @@ export class PipelineStepService {
 
     /**
      * Find a step in an array of steps by its index.
-     * @param stepArray The array of steps to search in
+     * @param steps The array of steps to search in
      * @param index The index of the step to find
      * @returns The step if found, null otherwise
      */
-    public static findStepById(stepArray: PipelineStep[], id: number): PipelineStep | null {
-        for (const step of stepArray) {
+    public static findStepById(steps: PipelineStep[], id: number): PipelineStep | null {
+        for (const step of steps) {
             if (step.id == id) {
                 return step;
             }
         }
         return null;
     }
+
 }

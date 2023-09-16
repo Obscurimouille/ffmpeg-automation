@@ -1,40 +1,36 @@
-import { FfmpegCommand } from "../../services/ffmpeg/ffmpeg.service";
 import { EnumInstruction } from "../../enums/enum-instruction";
-import { PipelineStep } from "../pipeline-step";
+import { EnumPipelineStepStatus, PipelineStep } from "../pipeline-step";
 import { EnumStepType } from "../../enums/enum-step-type";
 import { InstructionArgsDTO } from "../dtos/models/args-dto";
+import { InputFile } from "../../types/input-file";
 
 /**
  * A pipeline instruction.
  */
-export class PipelineInstruction extends PipelineStep {
+export abstract class PipelineInstruction extends PipelineStep {
 
     public static override readonly IDENTIFIER: EnumInstruction;
 
-    /* -------------------------------------------------------------------------- */
+    protected _workspaceOutputDir!: string;
 
     constructor(id: number, name: string, args: InstructionArgsDTO) {
-        console.log(`Creating instruction ${id}...`);
         super(id, EnumStepType.INSTRUCTION, name, args);
-        this.args = args;
     }
 
-    /**
-     * Decorate the given command depending on the instruction.
-     * @param command The command to decorate
-     * @returns The output files
-     */
-    protected processCommand(command: FfmpegCommand): string[] {
-        return [];
+    public override async run(): Promise<void> {
+        // Wait until the step is resolved
+        await this.waitForStatus(EnumPipelineStepStatus.RESOLVED);
+        // Set the status to processing
+        this.setStatus(EnumPipelineStepStatus.PROCESSING);
+
+        this._workspaceOutputDir = this._workspaceDir + 'output/';
+        const outputFiles = await this.FfmpegProcess();
+
+        // Set the status to ended
+        this._processEnded.next(outputFiles);
+        this.setStatus(EnumPipelineStepStatus.ENDED);
     }
 
-    public decorateCommand(command: FfmpegCommand): string[] {
-        // if (!this.inputFiles || !this.outputDir) {
-        //     throw new Error("Instruction data not set");
-        // }
-
-        // return this.processCommand(command);
-        return [];
-    }
+    protected abstract FfmpegProcess(): Promise<InputFile[]>;
 
 }

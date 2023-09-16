@@ -1,8 +1,7 @@
 import ffmpeg from 'fluent-ffmpeg';
 import pathToFfmpeg from 'ffmpeg-static';
-import { PipelineInstruction } from '../../classes/instructions/pipeline-instruction';
 
-export type FfmpegCommand = ffmpeg.FfmpegCommand;
+export type FfmpegCommandObject = ffmpeg.FfmpegCommand;
 
 export class FfmpegService {
 
@@ -15,31 +14,20 @@ export class FfmpegService {
         ffmpeg.setFfmpegPath(pathToFfmpeg);
     }
 
-    public static process(inputFiles: string[], instruction: PipelineInstruction, outputDir: string ): Promise<string[]> {
-        return new Promise<string[]>((resolve, reject) => {
-            const command = ffmpeg();
-            // Add command parameters and get output files
-            // instruction.setStepData(inputFiles, outputDir);
-            const outputFiles = instruction.decorateCommand(command);
-
-            command
-                .on('end', () => {
-                    resolve(outputFiles);
-                })
-                .on('error', (err) => {
-                    reject(err);
-                })
-                // .on("progress", (progress) => {
-				// 	const percentage = progress.percent.toFixed(2);
-				// })
-                .run();
-        });
+    public static createCommand(): FfmpegCommandObject {
+        return ffmpeg();
     }
 
-    private static addInputs(ffmpegCommand: FfmpegCommand, inputFiles: string[]): void {
-        for (const inputFile of inputFiles) {
-            ffmpegCommand.input(inputFile);
-        }
+    public static probe(file: string, onError: (error: any) => void): Promise<ffmpeg.FfprobeData> {
+        return new Promise((resolve, reject) => {
+            ffmpeg.ffprobe(file, (err, data) => {
+                if (err) {
+                    onError(err);
+                    resolve({} as ffmpeg.FfprobeData);
+                }
+                else resolve(data);
+            });
+        });
     }
 
 }

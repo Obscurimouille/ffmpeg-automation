@@ -1,4 +1,4 @@
-import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, isArray, isNumber, isString } from "class-validator";
+import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, isArray, isNumber, isString, ValidationOptions, registerDecorator } from "class-validator";
 import { EnumInstruction } from "../../../enums/enum-instruction";
 import { UtilsService } from "../../../services/utils/utils";
 import { EnumStatement } from "../../../enums/enum-statement";
@@ -18,8 +18,6 @@ type ParseResult = {
 /**
  * Validate if the step type is valid.
  * - The step type must be part of the EnumStepType enum
- * @param value The value to validate
- * @returns True if the value is valid, false otherwise
  */
 @ValidatorConstraint()
 export class ValidStepType implements ValidatorConstraintInterface {
@@ -35,8 +33,6 @@ export class ValidStepType implements ValidatorConstraintInterface {
 /**
  * Validate if the step name is valid.
  * - The step name must be part of the EnumInstruction or EnumStatement enum
- * @param value The value to validate
- * @returns True if the value is valid, false otherwise
  */
 @ValidatorConstraint()
 export class ValidStepName implements ValidatorConstraintInterface {
@@ -52,8 +48,6 @@ export class ValidStepName implements ValidatorConstraintInterface {
 /**
  * Validate if the instruction name is valid.
  * - The instruction name must be part of the EnumInstruction enum
- * @param value The value to validate
- * @returns True if the value is valid, false otherwise
  */
 @ValidatorConstraint()
 export class ValidInstructionName implements ValidatorConstraintInterface {
@@ -69,8 +63,6 @@ export class ValidInstructionName implements ValidatorConstraintInterface {
 /**
  * Validate if the statement name is valid.
  * - The statement name must be part of the EnumStatement enum
- * @param value The value to validate
- * @returns True if the value is valid, false otherwise
  */
 @ValidatorConstraint()
 export class ValidStatementName implements ValidatorConstraintInterface {
@@ -87,8 +79,6 @@ export class ValidStatementName implements ValidatorConstraintInterface {
  * Validate if the id is valid.
  * - The id must be a number
  * - The id must be greater than 0
- * @param value The value to validate
- * @returns True if the value is valid, false otherwise
  */
 @ValidatorConstraint()
 export class ValidId implements ValidatorConstraintInterface, Parse {
@@ -107,7 +97,7 @@ export class ValidId implements ValidatorConstraintInterface, Parse {
 
     defaultMessage(args: ValidationArguments) {
         const { message } = this.parse(args.value, args);
-        return message + '\n';
+        return message || '';
     }
 }
 
@@ -115,8 +105,6 @@ export class ValidId implements ValidatorConstraintInterface, Parse {
  * Validate if the file input is valid.
  * - The file input must be a string
  * - The file input must not be empty
- * @param value The value to validate
- * @returns True if the value is valid, false otherwise
  */
 @ValidatorConstraint()
 export class ValidFileInputs implements ValidatorConstraintInterface, Parse {
@@ -169,6 +157,52 @@ export class ValidFileInputs implements ValidatorConstraintInterface, Parse {
 
     defaultMessage(args: ValidationArguments) {
         const { message } = this.parse(args.value, args);
-        return message + '\n';
+        return message || '';
+    }
+}
+
+/**
+ * Set a value as optional.
+ * - If the value is defined, return true
+ * - Else, it returns false
+ * - You can specify other values that must be defined for the value to be optional
+ * For example, if you specify { includeAll: ['a', 'b'] }, the value will be optional only if a and b are defined
+ * If you specify { includeAny: ['c', 'd'] }, the value will be optional only if c or d is defined
+ */
+@ValidatorConstraint()
+export class Optional implements ValidatorConstraintInterface, Parse {
+
+    parse(value: any, args: ValidationArguments): ParseResult {
+        const options = args.constraints ? args.constraints[0] : null;
+
+        if (options === undefined || !Object.entries(options).length) {
+            return value === undefined ? { success: false, message: `value is not defined!` } : { success: true };
+        }
+
+        if (options.includeAll && (!isArray(options.includeAll) || options.includeAll.length === 0)) {
+            throw new Error(`"Optional" validator: "includeAll" option must be an array with at least one element!`);
+        }
+
+        // If the value is defined, return true
+        if (value !== undefined) return { success: true };
+
+        // Else, check if all other values are defined
+        for (const key of options.includeAll) {
+            if ((args.object as any)[key] === undefined) {
+                return { success: false, message: `at least one of the following options must be defined: ${options.includeAll}` };
+            }
+        }
+
+        return { success: true };
+    }
+
+    validate(value: any, args: ValidationArguments): boolean {
+        const { success } = this.parse(value, args);
+        return success;
+    }
+
+    defaultMessage(args: ValidationArguments) {
+        const { message } = this.parse(args.value, args);
+        return message || '';
     }
 }
