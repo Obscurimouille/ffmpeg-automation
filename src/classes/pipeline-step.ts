@@ -32,7 +32,7 @@ export abstract class PipelineStep {
 
     /**
      * Create a new pipeline step.
-     * @param index The index of the step
+     * @param id The id of the step
      * @param inputs The raw inputs of the step (before resolution)
      * @param instruction The instruction of the step
      */
@@ -55,7 +55,7 @@ export abstract class PipelineStep {
     }
 
     public startResolution(otherSteps: PipelineStep[]): void {
-        // For each raw input, resolve it to a file path or a step index
+        // For each raw input, resolve it to a file path or a step id
         for (const rawInput of this._rawInputs) {
 
             const data = StepService.resolveInput(rawInput);
@@ -66,9 +66,9 @@ export abstract class PipelineStep {
                 if (typeof result === 'string') {
                     this._inputs.push(result);
                 }
-                // The result is a step index so we have to wait for the step to be resolved
+                // The result is a step id so we have to wait for the step to be resolved
                 else if (typeof result === 'number') {
-                    // Find the step associated with the received index
+                    // Find the step associated with the received id
                     const associatedStep = StepService.findStepById(otherSteps, result);
 
                     if (!associatedStep) {

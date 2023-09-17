@@ -142,6 +142,26 @@ export class ValidFileInputs implements ValidatorConstraintInterface, Parse {
                 return { success: false, message: `invalid input file: ${input}` };
             }
 
+            // Check if the input is a selector
+            if (SelectorService.isSelector(input)) {
+                const selectorClass = SelectorService.resolve(input);
+                let selector;
+                try {
+                    selector = new selectorClass(input);
+                }
+                catch (error: any) {
+                    return { success: false, message: error.message };
+                }
+
+                const params = selector.getParams();
+                if (params.targetId !== undefined) {
+                    const parserService = PipelineParserService.getInstance();
+                    if (!parserService.isIdAlreadyUsed(params.targetId)) {
+                        return { success: false, message: `step ${params.targetId} does not exist!` };
+                    }
+                }
+            }
+
             if (options.videoOnly) {
                 if (!SelectorService.isSelector(input) && !FileService.hasVideoExtension(input)) {
                     return { success: false, message: `input file must be a video: ${input}` };

@@ -31,4 +31,8 @@ export class InputSelector {
         return this.outputType!;
     }
 
+    public getParams(): any {
+        return this.params;
+    }
+
 }
