@@ -1,7 +1,7 @@
 import { PipelineStep } from "../pipeline-step";
-import { EnumStepType } from "../../enums/enum-step-type";
-import { EnumStatement } from "../../enums/enum-statement";
-import { StatementArgsDTO } from "../dtos/models/args-dto";
+import { EnumStepType } from "../../../enums/enum-step-type";
+import { EnumStatement } from "../../../enums/enum-statement";
+import { StatementArgsDTO } from "../../dtos/models/args-dto";
 
 /**
  * A pipeline statement.

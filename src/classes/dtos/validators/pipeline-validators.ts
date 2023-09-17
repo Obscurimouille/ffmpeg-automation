@@ -1,4 +1,4 @@
-import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, isArray, isNumber, isString, ValidationOptions, registerDecorator } from "class-validator";
+import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, isArray, isNumber } from "class-validator";
 import { EnumInstruction } from "../../../enums/enum-instruction";
 import { UtilsService } from "../../../services/utils/utils";
 import { EnumStatement } from "../../../enums/enum-statement";

@@ -1,8 +1,8 @@
 import { PipelineInstruction } from "../pipeline-instruction";
-import { EnumInstruction } from "../../../enums/enum-instruction";
+import { EnumInstruction } from "../../../../enums/enum-instruction";
 import { SplitArgsDTO } from "./split-args";
-import { InputFile } from "../../../types/input-file";
-import { FfmpegService } from "../../../services/ffmpeg/ffmpeg.service";
+import { InputFile } from "../../../../types/input-file";
+import { FfmpegService } from "../../../../services/ffmpeg/ffmpeg.service";
 
 /**
  * Split pipeline instruction.

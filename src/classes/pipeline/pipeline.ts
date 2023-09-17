@@ -1,8 +1,8 @@
-import { WorkspaceService } from "../services/workspace/workspace.service";
+import { WorkspaceService } from "../../services/workspace/workspace.service";
 import { PipelineStep } from "./pipeline-step";
-import { PipelineService } from "../services/pipeline/pipeline.service";
-import { PipelineDTO } from "./dtos/models/pipeline-dto";
-import { StepService } from "../services/step/step.service";
+import { PipelineService } from "../../services/pipeline/pipeline.service";
+import { PipelineDTO } from "../dtos/models/pipeline-dto";
+import { StepService } from "../../services/step/step.service";
 
 export class Pipeline {
 

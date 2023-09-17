@@ -1,5 +1,6 @@
 import { StepDTO } from '../../classes/dtos/models/step-dto';
-import { PipelineStep } from '../../classes/pipeline-step';
+import { logger } from '../../logger';
+import { PipelineStep } from '../../classes/pipeline/pipeline-step';
 import { EnumStepType } from '../../enums/enum-step-type';
 import { InstructionService } from '../instruction/instruction.service';
 import { RessourceService } from '../ressources/ressource.service';
@@ -68,7 +69,7 @@ export class StepService {
             try {
                 selectorClass = SelectorService.resolve(input);
             } catch (error: any) {
-                console.error('Error:', error.message);
+                logger.error('Error:', error.message);
                 process.exit(1);
             }
 

@@ -1,8 +1,7 @@
-import { PipelineInstruction } from "./instructions/pipeline-instruction";
-import { StepService } from "../services/step/step.service";
+import { StepService } from "../../services/step/step.service";
 import { Subject } from "rxjs";
-import { WorkspaceService } from "../services/workspace/workspace.service";
-import { EnumStepType } from "../enums/enum-step-type";
+import { WorkspaceService } from "../../services/workspace/workspace.service";
+import { EnumStepType } from "../../enums/enum-step-type";
 
 export enum EnumPipelineStepStatus {
     PENDING,         // The step has not been resolved yet

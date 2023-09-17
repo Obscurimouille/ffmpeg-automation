@@ -1,9 +1,10 @@
 import 'reflect-metadata';
-import { ClassTransformService } from "../services/plain-to-class/plain-to-class.service";
+import { ClassTransformService } from "../../services/plain-to-class/plain-to-class.service";
 import { ValidationError, isNumber } from 'class-validator';
-import { PipelineDTO } from './dtos/models/pipeline-dto';
-import { InstructionArgsDTO } from './dtos/models/args-dto';
-import { PipelineParserService } from '../services/pipeline/pipeline-parser.service';
+import { PipelineDTO } from '../dtos/models/pipeline-dto';
+import { InstructionArgsDTO } from '../dtos/models/args-dto';
+import { PipelineParserService } from '../../services/pipeline/pipeline-parser.service';
+import { logger } from '../../logger';
 
 type ErrorCallback = (message: string) => void;
 
@@ -32,9 +33,9 @@ export class PipelineParser {
     }
 
     private handleValidationErrors(errors: ValidationError[]) {
-        console.log("Error in pipeline:");
+        logger.error("Error in pipeline:");
         for (const error of errors) {
-            console.log(PipelineParser.formatValidationError(error));
+            logger.error(PipelineParser.formatValidationError(error));
         }
         process.exit(1);
     }

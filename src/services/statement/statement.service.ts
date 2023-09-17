@@ -1,5 +1,5 @@
 import { ClassConstructor } from "class-transformer";
-import { PipelineStatement } from "../../classes/statement/pipeline-statement";
+import { PipelineStatement } from "../../classes/pipeline/statement/pipeline-statement";
 import { StatementDTO } from "../../classes/dtos/models/statement-dto";
 
 export class StatementService {
