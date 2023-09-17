@@ -3,6 +3,7 @@ import { EnumInstruction } from "../../../../enums/enum-instruction";
 import { SplitArgsDTO } from "./split-args";
 import { InputFile } from "../../../../types/input-file";
 import { FfmpegService } from "../../../../services/ffmpeg/ffmpeg.service";
+import { EnumArchiveFilter } from "../../../../enums/enum-archive-filter";
 
 /**
  * Split pipeline instruction.
@@ -21,8 +22,8 @@ export class Split extends PipelineInstruction {
 
     public static override readonly IDENTIFIER = EnumInstruction.SPLIT;
 
-    constructor(id: number, args: SplitArgsDTO) {
-        super(id, Split.IDENTIFIER, args);
+    constructor(id: number, args: SplitArgsDTO, archive?: EnumArchiveFilter) {
+        super(id, Split.IDENTIFIER, args, archive);
     }
 
     protected override FfmpegProcess(): Promise<InputFile[]> {
@@ -54,7 +55,7 @@ export class Split extends PipelineInstruction {
             // Generate Ffmpeg commands to split the video
             for (let i = 0; i < nbSegments; i++) {
                 const startTime = i * segmentDuration;
-                const outputFile = this._workspaceOutputDir! + `segment-output-${i + 1}.mp4`;
+                const outputFile = this._workspaceOutputDir! + `${this.id}-split-output-${i + 1}.mp4`;
 
                 processes.push(new Promise((resolve, reject) => {
                     const command = FfmpegService.createCommand();
