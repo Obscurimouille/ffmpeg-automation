@@ -4,7 +4,8 @@ import { ValidationError, isNumber } from 'class-validator';
 import { PipelineDTO } from '../dtos/models/pipeline-dto';
 import { InstructionArgsDTO } from '../dtos/models/args-dto';
 import { PipelineParserService } from '../../services/pipeline/pipeline-parser.service';
-import { logger } from '../../logger';
+import { logger, pipelineParserLogger } from '../../logger';
+import { StepDTO } from '../dtos/models/step-dto';
 
 type ErrorCallback = (message: string) => void;
 
@@ -33,9 +34,8 @@ export class PipelineParser {
     }
 
     private handleValidationErrors(errors: ValidationError[]) {
-        logger.error("Error in pipeline:");
         for (const error of errors) {
-            logger.error(PipelineParser.formatValidationError(error));
+            pipelineParserLogger.error(PipelineParser.formatValidationError(error));
         }
         process.exit(1);
     }
@@ -63,12 +63,10 @@ export class PipelineParser {
         let content = ``;
 
         if (error.value && !Array.isArray(error.value)) {
-            const id = error.value.id;
-            if (id && isNumber(id)) {
-                content += `> Step ${id}:\n`;
-            }
-            else {
-                content += `> Step:\n`;
+            if (error.value instanceof StepDTO) {
+                const id = error.value.id;
+                if (id && isNumber(id)) content += `> Step ${id}:\n`;
+                else content += `> Step:\n`;
             }
         }
 
@@ -83,9 +81,7 @@ export class PipelineParser {
                 if (error.target instanceof InstructionArgsDTO) {
                     content += `  - arguments: ${message}\n`;
                 }
-                else {
-                    content += `  - ${message}\n`;
-                }
+                else content += `  - ${message}\n`;
             }
         }
         return content;
