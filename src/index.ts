@@ -13,7 +13,7 @@ async function main(): Promise<void> {
     if (!pipelineFile) throw new Error("Error: Could not find pipeline file");
 
     const parser = new PipelineParser(pipelineFile);
-    const pipelineDTO = parser.run((errorMessage) => {
+    const pipelineDTO = await parser.run((errorMessage) => {
         throw new Error(`Error: ${errorMessage}`);
     });
 

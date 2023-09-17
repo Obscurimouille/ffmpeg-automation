@@ -1,3 +1,4 @@
+import { plainToClass } from "class-transformer";
 import { InstructionDTO } from "../../classes/dtos/models/instruction-dto";
 import { StatementDTO } from "../../classes/dtos/models/statement-dto";
 import { StepDTO } from "../../classes/dtos/models/step-dto";
@@ -15,17 +16,17 @@ export class PipelineDTOService {
      * @returns The step model
      */
     public static toStepChildDTO(step: StepDTO): StepDTO {
-        if (!step.type) throw new Error('Step type is not defined');
+        if (!step.type) return plainToClass(StepDTO, step);
 
         switch (step.type) {
             case EnumStepType.INSTRUCTION:
-                return PipelineDTOService.toInstructionChildDTO(step);
+                return PipelineDTOService.toInstructionChildDTO(step as InstructionDTO);
 
             case EnumStepType.STATEMENT:
-                return PipelineDTOService.toStatementChildDTO(step);
+                return PipelineDTOService.toStatementChildDTO(step as StatementDTO);
 
             default:
-                throw new Error('Unknown step type');
+                return plainToClass(StepDTO, step);
         }
     }
 
@@ -35,7 +36,7 @@ export class PipelineDTOService {
      * @returns The instruction model
      */
     public static toInstructionChildDTO(instruction: InstructionDTO): InstructionDTO {
-        if (!instruction.name) throw new Error('Instruction name is not defined');
+        if (!instruction.name) return plainToClass(InstructionDTO, instruction);
 
         switch (instruction.name) {
             case EnumInstruction.SEGMENT:
@@ -43,7 +44,7 @@ export class PipelineDTOService {
             case EnumInstruction.SPLIT:
                 return ClassTransformService.plainToClass(SplitDTO, instruction);
 
-            default: throw new Error('Unknown instruction');
+            default: return plainToClass(InstructionDTO, instruction);
         }
     }
 
@@ -53,10 +54,10 @@ export class PipelineDTOService {
      * @returns The statement model
      */
     public static toStatementChildDTO(statement: StatementDTO): StatementDTO {
-        if (!statement.name) throw new Error('Instruction name is not defined');
+        if (!statement.name) return plainToClass(StatementDTO, statement);
 
         switch (statement.name) {
-            default: throw new Error('Unknown instruction');
+            default: return plainToClass(StatementDTO, statement);
         }
     }
 
