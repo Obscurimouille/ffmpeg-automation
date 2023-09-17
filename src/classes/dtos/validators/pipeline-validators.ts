@@ -5,6 +5,7 @@ import { EnumStatement } from "../../../enums/enum-statement";
 import { EnumStepType } from "../../../enums/enum-step-type";
 import { FileService } from "../../../services/utils/file/file.service";
 import { SelectorService } from "../../../services/selector/selector.service";
+import { PipelineParserService } from "../../../services/pipeline/pipeline-parser.service";
 
 interface Parse {
     parse(value: any, args: ValidationArguments): ParseResult;
@@ -79,6 +80,7 @@ export class ValidStatementName implements ValidatorConstraintInterface {
  * Validate if the id is valid.
  * - The id must be a number
  * - The id must be greater than 0
+ * - The id must not be already used
  */
 @ValidatorConstraint()
 export class ValidId implements ValidatorConstraintInterface, Parse {
@@ -87,6 +89,12 @@ export class ValidId implements ValidatorConstraintInterface, Parse {
         if (value === undefined) return { success: false, message: `id is not defined!` };
         if (!isNumber(value)) return { success: false, message: `${value} is not a valid id!` };
         if (value <= 0) return { success: false, message: `id must be a positive number!` };
+
+        // Check if the id is already used
+        const parserService = PipelineParserService.getInstance();
+        if (parserService.isIdAlreadyUsed(value)) return { success: false, message: `id ${value} is already used!` };
+        parserService.addValidateId(value);
+
         return { success: true };
     }
 

@@ -3,15 +3,18 @@ import { ClassTransformService } from "../services/plain-to-class/plain-to-class
 import { ValidationError, isNumber } from 'class-validator';
 import { PipelineDTO } from './dtos/models/pipeline-dto';
 import { InstructionArgsDTO } from './dtos/models/args-dto';
+import { PipelineParserService } from '../services/pipeline/pipeline-parser.service';
 
 type ErrorCallback = (message: string) => void;
 
 export class PipelineParser {
 
+    private parserService: PipelineParserService;
     private _inputPipeline: string;
 
     constructor(pipeline: string) {
         this._inputPipeline = pipeline;
+        this.parserService = PipelineParserService.getInstance();
     }
 
     public run(fail: ErrorCallback = () => {}): PipelineDTO {
@@ -21,6 +24,9 @@ export class PipelineParser {
         // Instanciate and validate pipeline DTO (without detailed instructions and statements)
         const pipelineDTO = ClassTransformService.plainToClass(PipelineDTO, json!);
         ClassTransformService.validate(pipelineDTO, this.handleValidationErrors);
+
+        // Reset the list of ids to validate
+        this.parserService.resetValidatedIds();
 
         return pipelineDTO;
     }
