@@ -18,13 +18,13 @@ export class PipelineParser {
         this.parserService = PipelineParserService.getInstance();
     }
 
-    public run(fail: ErrorCallback = () => {}): PipelineDTO {
+    public async run(fail: ErrorCallback = () => {}): Promise<PipelineDTO> {
         // Parse the JSON input pipeline
         const json = this.parseInputPipeline();
 
         // Instanciate and validate pipeline DTO (without detailed instructions and statements)
         const pipelineDTO = ClassTransformService.plainToClass(PipelineDTO, json!);
-        ClassTransformService.validate(pipelineDTO, this.handleValidationErrors);
+        await ClassTransformService.validate(pipelineDTO, this.handleValidationErrors);
 
         // Reset the list of ids to validate
         this.parserService.resetValidatedIds();
@@ -66,6 +66,9 @@ export class PipelineParser {
             const id = error.value.id;
             if (id && isNumber(id)) {
                 content += `> Step ${id}:\n`;
+            }
+            else {
+                content += `> Step:\n`;
             }
         }
 

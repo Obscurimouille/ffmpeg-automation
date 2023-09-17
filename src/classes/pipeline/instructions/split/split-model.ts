@@ -1,9 +1,9 @@
 import { Expose, Type } from "class-transformer";
 import { ValidateNested } from "class-validator";
-import { StepDTO } from "../../../dtos/models/step-dto";
 import { SplitArgsDTO } from "./split-args";
+import { InstructionDTO } from "../../../dtos/models/instruction-dto";
 
-export class SplitDTO extends StepDTO {
+export class SplitDTO extends InstructionDTO {
 
     @Expose()
     @ValidateNested()

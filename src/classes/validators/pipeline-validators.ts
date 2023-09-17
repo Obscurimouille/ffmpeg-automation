@@ -1,11 +1,10 @@
 import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, isArray, isNumber } from "class-validator";
-import { EnumInstruction } from "../../../enums/enum-instruction";
-import { UtilsService } from "../../../services/utils/utils";
-import { EnumStatement } from "../../../enums/enum-statement";
-import { EnumStepType } from "../../../enums/enum-step-type";
-import { FileService } from "../../../services/utils/file/file.service";
-import { SelectorService } from "../../../services/selector/selector.service";
-import { PipelineParserService } from "../../../services/pipeline/pipeline-parser.service";
+import { EnumInstruction } from "../../enums/enum-instruction";
+import { UtilsService } from "../../services/utils/utils";
+import { EnumStatement } from "../../enums/enum-statement";
+import { FileService } from "../../services/utils/file/file.service";
+import { SelectorService } from "../../services/selector/selector.service";
+import { PipelineParserService } from "../../services/pipeline/pipeline-parser.service";
 
 interface Parse {
     parse(value: any, args: ValidationArguments): ParseResult;
@@ -14,21 +13,6 @@ interface Parse {
 type ParseResult = {
     success: boolean,
     message?: string
-}
-
-/**
- * Validate if the step type is valid.
- * - The step type must be part of the EnumStepType enum
- */
-@ValidatorConstraint()
-export class ValidStepType implements ValidatorConstraintInterface {
-    validate(value: any): boolean {
-        return UtilsService.isPartOfEnum(value, EnumStepType);
-    }
-
-    defaultMessage(args: ValidationArguments) {
-        return `'$value' is not a valid step type!`;
-    }
 }
 
 /**
@@ -43,36 +27,6 @@ export class ValidStepName implements ValidatorConstraintInterface {
 
     defaultMessage(args: ValidationArguments) {
         return `'$value' is not a valid step name!`;
-    }
-}
-
-/**
- * Validate if the instruction name is valid.
- * - The instruction name must be part of the EnumInstruction enum
- */
-@ValidatorConstraint()
-export class ValidInstructionName implements ValidatorConstraintInterface {
-    validate(value: any): boolean {
-        return UtilsService.isPartOfEnum(value, EnumInstruction);
-    }
-
-    defaultMessage(args: ValidationArguments) {
-        return `'$value' is not a valid instruction!`;
-    }
-}
-
-/**
- * Validate if the statement name is valid.
- * - The statement name must be part of the EnumStatement enum
- */
-@ValidatorConstraint()
-export class ValidStatementName implements ValidatorConstraintInterface {
-    validate(value: any): boolean {
-        return UtilsService.isPartOfEnum(value, EnumStatement);
-    }
-
-    defaultMessage(args: ValidationArguments) {
-        return `'$value' is not a valid statement!`;
     }
 }
 

@@ -20,14 +20,17 @@ export class ClassTransformService {
      * @param callback The callback to call if errors are found.
      * @returns The validation errors.
      */
-    public static validate(instance: any, callback: (errors: ValidationError[]) => void): void {
-        validate(instance)
+    public static validate(instance: any, callback: (errors: ValidationError[]) => void): Promise<ValidationError[]> {
+        return new Promise((resolve, reject) => {
+            validate(instance)
             .then((errors) => {
                 if (errors.length) callback(errors);
+                resolve(errors);
             })
             .catch((validationError) => {
                 throw new Error(`Validation error occurred: ${validationError}`);
             });
+        });
     }
 
 }

@@ -13,9 +13,7 @@ export class PipelineDTO {
     @ValidateNested()
     @Type(() => StepDTO)
     @Transform(({value}) => {
-        return value.map((element: StepDTO) => {
-            return PipelineDTOService.toStepChildDTO(element);
-        });
+        return value.map((element: StepDTO) => PipelineDTOService.toStepChildDTO(element));
     })
     public steps!: StepDTO[];
 

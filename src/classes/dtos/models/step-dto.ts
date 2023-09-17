@@ -1,17 +1,17 @@
 import { Expose } from "class-transformer";
-import { IsDefined, Validate, ValidateNested } from "class-validator";
-import { ValidId, ValidStepName, ValidStepType } from "../validators/pipeline-validators";
+import { IsDefined, IsEnum, Validate, ValidateNested } from "class-validator";
+import { ValidId, ValidStepName } from "../../validators/pipeline-validators";
 import { EnumInstruction } from "../../../enums/enum-instruction";
 import { EnumStatement } from "../../../enums/enum-statement";
 import { EnumStepType } from "../../../enums/enum-step-type";
 
-export abstract class StepDTO {
+export class StepDTO {
 
     @Expose()
     @IsDefined({
         message: "missing type"
     })
-    @Validate(ValidStepType)
+    @IsEnum(EnumStepType)
     public type!: EnumStepType;
 
     @Expose()
