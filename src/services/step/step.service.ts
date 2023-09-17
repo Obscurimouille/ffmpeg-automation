@@ -8,6 +8,7 @@ import { SelectorService } from '../selector/selector.service';
 import { StatementService } from '../statement/statement.service';
 import { FileService } from '../utils/file/file.service';
 import fs from 'fs';
+import { InstructionDTO } from '../../classes/dtos/models/instruction-dto';
 
 export enum EnumInputResolution {
     STRING,
@@ -44,7 +45,7 @@ export class StepService {
         switch (step.type) {
             case EnumStepType.INSTRUCTION:
                 const instructionClass = InstructionService.resolve(step.name);
-                return new instructionClass(step.id, step.args);
+                return new instructionClass(step.id, step.args, (step as InstructionDTO).archive);
 
             case EnumStepType.STATEMENT:
                 const statementClass = StatementService.resolve(step.name);

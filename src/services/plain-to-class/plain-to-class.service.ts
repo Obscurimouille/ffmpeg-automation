@@ -4,7 +4,6 @@ import { ValidationError, validate } from 'class-validator';
 export class ClassTransformService {
 
     public static readonly DEFAULT_TRANSFORM_OPTIONS: ClassTransformOptions = {
-        excludeExtraneousValues: true,
         exposeUnsetFields: false,
         enableCircularCheck: true,
     }
