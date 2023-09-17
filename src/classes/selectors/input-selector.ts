@@ -1,4 +1,4 @@
-import { EnumInputResolution, InputResolution } from "../../services/pipeline-step/pipeline-step.service";
+import { EnumInputResolution, InputResolution } from "../../services/step/step.service";
 
 /**
  * Abstract class for all pipeline step instructions.
@@ -29,6 +29,10 @@ export class InputSelector {
 
     public getOutputType(): EnumInputResolution {
         return this.outputType!;
+    }
+
+    public getParams(): any {
+        return this.params;
     }
 
 }

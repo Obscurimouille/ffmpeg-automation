@@ -1,4 +1,4 @@
-import { EnumPipelineStepStatus, PipelineStep } from "../../classes/pipeline-step";
+import { EnumPipelineStepStatus, PipelineStep } from "../../classes/pipeline/pipeline-step";
 
 export class PipelineService {
 

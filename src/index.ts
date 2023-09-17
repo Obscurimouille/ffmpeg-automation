@@ -1,39 +1,35 @@
 import { RessourceService } from "./services/ressources/ressource.service";
-import { PipelineModelService } from "./services/pipeline-model/pipeline-model.service";
 import { FfmpegService } from "./services/ffmpeg/ffmpeg.service";
-import { Pipeline } from "./classes/pipeline";
+import { PipelineParser } from "./classes/pipeline/pipeline-parser";
+import { Pipeline } from "./classes/pipeline/pipeline";
+import { logger } from "./logger";
 
 async function main(): Promise<void> {
 
-    FfmpegService.init();
+    init();
 
-    const pipelineModelFile = RessourceService.getPipeline();
+    const pipelineFile = RessourceService.getPipeline();
 
-    if (!pipelineModelFile) {
-        console.error("Error: Could not find pipeline file");
-        process.exit(1);
-    }
+    if (!pipelineFile) throw new Error("Error: Could not find pipeline file");
 
-    let pipelineModel;
-
-    try {
-        pipelineModel = PipelineModelService.parse(pipelineModelFile);
-        // PipelineModelService.check(pipelineModel);
-    }
-    catch (error: any) {
-        console.error("Error:", error.message);
-        process.exit(1);
-    }
+    const parser = new PipelineParser(pipelineFile);
+    const pipelineDTO = await parser.run((errorMessage) => {
+        throw new Error(`Error: ${errorMessage}`);
+    });
 
     RessourceService.clearOutputDirectory();
 
-    const pipeline = new Pipeline(pipelineModel);
+    const pipeline = new Pipeline(pipelineDTO);
 
-    console.log('\nStarting pipeline...');
+    logger.info('Starting pipeline...');
 
     await pipeline.run();
 
-    console.log('Pipeline ended');
+    logger.info('Pipeline ended\n');
+}
+
+function init(): void {
+    FfmpegService.init();
 }
 
 main();

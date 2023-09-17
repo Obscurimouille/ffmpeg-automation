@@ -1,4 +1,5 @@
 import { FileService } from '../utils/file/file.service';
+import { v4 as uuidv4 } from 'uuid';
 
 export class RessourceService {
 
@@ -7,7 +8,8 @@ export class RessourceService {
     public static OUTPUT_DIRECTORY = './ressources/output/';
 
     /**
-     * Get the pipeline from the ressources folder.
+     * Get the input pipeline file from the ressources folder.
+     * @returns The pipeline file as a string
      */
     public static getPipeline(): string | null {
         return FileService.getFile(RessourceService.PIPELINE_PATH);
@@ -20,44 +22,25 @@ export class RessourceService {
         FileService.clearDirectory(RessourceService.OUTPUT_DIRECTORY);
     }
 
-    // /**
-    //  * Resolve the input files from the given paths.
-    //  * @param paths The paths to resolve.
-    //  * @throws Error if a path is invalid or if no input files are found.
-    //  */
-    // public static resolveInputFiles(paths: string[]): string[] {
-    //     let files = [];
-    //     for (let path of paths) {
-    //         // The path is a selector
-    //         if (path.includes('@')) {
-    //             let selectorClass;
+    /**
+     * Archive a list of files by copying them to the output directory.
+     * @param files The files to archive
+     */
+    public static archiveFiles(files: string[]): void {
+        for (const file of files) {
+            RessourceService.archiveFile(file);
+        }
+    }
 
-    //             try {
-    //                 selectorClass = SelectorService.resolve(path);
-    //             }
-    //             catch (error: any) {
-    //                 console.error("Error:", error.message);
-    //                 process.exit(1);
-    //             }
-
-    //             const selector = new selectorClass(path);
-    //             const selectorFiles = selector.resolve();
-
-    //             for (let file of selectorFiles) {
-    //                 files.push(file);
-    //             }
-    //         }
-
-    //         // The path is a normal path
-    //         else {
-    //             path = RessourceService.INPUT_DIRECTORY + path;
-    //             if (!fs.existsSync(path)) {
-    //                 throw new Error(`File ${path} not found`);
-    //             }
-    //             files.push(path);
-    //         }
-    //     }
-    //     return files;
-    // }
+    /**
+     * Archive a file by copying it to the output directory.
+     * @param file The file to archive
+     */
+    public static archiveFile(file: string): void {
+        // Copy the file to the output directory
+        const filename = FileService.getFilename(file);
+        const outputFilepath = RessourceService.OUTPUT_DIRECTORY + filename;
+        FileService.copyFile(file, outputFilepath);
+    }
 
 }

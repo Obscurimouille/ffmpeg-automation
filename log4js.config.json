@@ -1,0 +1,28 @@
+{
+    "appenders": {
+        "console": {
+            "type": "console",
+            "layout": {
+                "type": "pattern",
+                "pattern": "%[[%d{hh:mm:ss}] [%p] - %m%]"
+            }
+        },
+        "pipeline-parser-console": {
+            "type": "console",
+            "layout": {
+              "type": "pattern",
+              "pattern": "%[[%p] - Pipeline Parser%n%m%]"
+            }
+        }
+    },
+    "categories": {
+        "default": {
+            "appenders": ["console"],
+            "level": "trace"
+        },
+        "pipeline-parser": {
+            "appenders": ["pipeline-parser-console"],
+            "level": "debug"
+        }
+    }
+}
