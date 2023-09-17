@@ -1,5 +1,6 @@
 import { StepDTO } from '../../classes/dtos/models/step-dto';
-import { PipelineStep } from '../../classes/pipeline-step';
+import { logger } from '../../logger';
+import { PipelineStep } from '../../classes/pipeline/pipeline-step';
 import { EnumStepType } from '../../enums/enum-step-type';
 import { InstructionService } from '../instruction/instruction.service';
 import { RessourceService } from '../ressources/ressource.service';
@@ -10,10 +11,10 @@ import fs from 'fs';
 
 export enum EnumInputResolution {
     STRING,
-    STEP_INDEX,
+    STEP_ID,
 }
-export type StepIndex = number;
-export type InputResolution = string[] | StepIndex[];
+export type StepId = number;
+export type InputResolution = string[] | StepId[];
 
 export class StepService {
 
@@ -56,7 +57,7 @@ export class StepService {
     /**
      * Resolve the input of a step.
      * - The input wan be a file path or a file selector (e.g. @step-1.output)
-     * - The ouput can be an array of file paths or an array of step indexes
+     * - The ouput can be an array of file paths or an array of step ids
      * @param input The input to resolve
      * @returns The resolved input
      */
@@ -68,7 +69,7 @@ export class StepService {
             try {
                 selectorClass = SelectorService.resolve(input);
             } catch (error: any) {
-                console.error('Error:', error.message);
+                logger.error('Error:', error.message);
                 process.exit(1);
             }
 
@@ -89,9 +90,9 @@ export class StepService {
     }
 
     /**
-     * Find a step in an array of steps by its index.
+     * Find a step in an array of steps by its id.
      * @param steps The array of steps to search in
-     * @param index The index of the step to find
+     * @param id The id of the step to find
      * @returns The step if found, null otherwise
      */
     public static findStepById(steps: PipelineStep[], id: number): PipelineStep | null {

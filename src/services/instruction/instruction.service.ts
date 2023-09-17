@@ -1,8 +1,8 @@
 import { ClassConstructor } from "class-transformer";
-import { PipelineInstruction } from "../../classes/instructions/pipeline-instruction";
-import { Segment } from "../../classes/instructions/segment/segment";
+import { PipelineInstruction } from "../../classes/pipeline/instructions/pipeline-instruction";
+import { Segment } from "../../classes/pipeline/instructions/segment/segment";
 import { InstructionDTO } from "../../classes/dtos/models/instruction-dto";
-import { Split } from "../../classes/instructions/split/split";
+import { Split } from "../../classes/pipeline/instructions/split/split";
 
 export class InstructionService {
 

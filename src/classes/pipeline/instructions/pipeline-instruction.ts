@@ -1,8 +1,8 @@
-import { EnumInstruction } from "../../enums/enum-instruction";
+import { EnumInstruction } from "../../../enums/enum-instruction";
 import { EnumPipelineStepStatus, PipelineStep } from "../pipeline-step";
-import { EnumStepType } from "../../enums/enum-step-type";
-import { InstructionArgsDTO } from "../dtos/models/args-dto";
-import { InputFile } from "../../types/input-file";
+import { EnumStepType } from "../../../enums/enum-step-type";
+import { InstructionArgsDTO } from "../../dtos/models/args-dto";
+import { InputFile } from "../../../types/input-file";
 
 /**
  * A pipeline instruction.

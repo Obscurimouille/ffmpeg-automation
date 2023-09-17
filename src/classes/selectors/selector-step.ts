@@ -2,7 +2,7 @@ import { InputSelector } from "./input-selector";
 import { EnumInputResolution, InputResolution } from "../../services/step/step.service";
 
 type SelectorStepParams = {
-    index: number;
+    targetId: number;
     param: SelectorStepFilesParam;
 };
 type SelectorStepFilesParam = 'output';
@@ -13,7 +13,7 @@ export class SelectorStep extends InputSelector {
 
     /**
      * Syntax :
-     * - '@step-<index>:<tag>'
+     * - '@step-<id>:<tag>'
      * Examples :
      * - '@step-1:output'
      */
@@ -29,22 +29,22 @@ export class SelectorStep extends InputSelector {
         const inputSections = input.split(':');
         if (inputSections.length != 2) throw new Error(`Invalid step selector parameters ${input}`);
 
-        const index = Number(inputSections[0].replace('@step-', ''));
-        if (isNaN(index)) throw new Error(`Invalid step index ${index}`);
+        const targetId = Number(inputSections[0].replace('@step-', ''));
+        if (isNaN(targetId)) throw new Error(`Invalid step id ${targetId}`);
 
         const param1 = inputSections[1];
-        if (param1 != 'output') throw new Error(`Invalid step files parameter ${param1}`);
+        if (param1 != 'output') throw new Error(`Invalid step parameter "${param1}"`);
 
-        return { index, param: param1 } as SelectorStepParams;
+        return { targetId, param: param1 } as SelectorStepParams;
     }
 
     protected override determineOutputType(): EnumInputResolution {
-        return EnumInputResolution.STEP_INDEX;
+        return EnumInputResolution.STEP_ID;
     }
 
     public override resolve(): InputResolution {
-        // Return the step index
-        return [this.params.index];
+        // Return the step id
+        return [this.params.targetId];
     }
 
 }

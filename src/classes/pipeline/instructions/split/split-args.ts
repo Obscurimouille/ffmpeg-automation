@@ -1,8 +1,8 @@
 import { Expose } from "class-transformer";
-import { IsNumber, IsOptional, IsPositive, Validate } from "class-validator";
-import { Optional, ValidFileInputs } from "../../dtos/validators/pipeline-validators";
-import { InstructionArgsDTO } from "../../dtos/models/args-dto";
-import { InputFile } from "../../../types/input-file";
+import { Validate } from "class-validator";
+import { Optional, ValidFileInputs } from "../../../dtos/validators/pipeline-validators";
+import { InstructionArgsDTO } from "../../../dtos/models/args-dto";
+import { InputFile } from "../../../../types/input-file";
 
 export class SplitArgsDTO extends InstructionArgsDTO {
 

@@ -1,5 +1,5 @@
 import { Expose } from "class-transformer";
-import { IsDefined, Validate } from "class-validator";
+import { Validate } from "class-validator";
 import { ValidFileInputs } from "../validators/pipeline-validators";
 import { InputFile } from "../../../types/input-file";
 

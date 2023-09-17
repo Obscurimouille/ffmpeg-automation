@@ -1,7 +1,8 @@
 import { RessourceService } from "./services/ressources/ressource.service";
 import { FfmpegService } from "./services/ffmpeg/ffmpeg.service";
-import { PipelineParser } from "./classes/pipeline-parser";
-import { Pipeline } from "./classes/pipeline";
+import { PipelineParser } from "./classes/pipeline/pipeline-parser";
+import { Pipeline } from "./classes/pipeline/pipeline";
+import { logger } from "./logger";
 
 async function main(): Promise<void> {
 
@@ -20,11 +21,11 @@ async function main(): Promise<void> {
 
     const pipeline = new Pipeline(pipelineDTO);
 
-    console.log('\nStarting pipeline...');
+    logger.info('Starting pipeline...');
 
     await pipeline.run();
 
-    console.log('Pipeline ended');
+    logger.info('Pipeline ended\n');
 }
 
 function init(): void {

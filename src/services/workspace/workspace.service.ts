@@ -6,11 +6,11 @@ export class WorkspaceService {
 
     /**
      * Create a new step folder in the workspace directory.
-     * @param index The index of the step
+     * @param id The id of the step
      * @returns The path of the created folder
      */
-    public static createStepFolder(index: number): string {
-        const path = WorkspaceService.WORKSPACE_DIRECTORY + `step-${index}/`;
+    public static createStepFolder(id: number): string {
+        const path = WorkspaceService.WORKSPACE_DIRECTORY + `step-${id}/`;
         FileService.createDirectory(path);
         FileService.createDirectory(path + 'input/');
         FileService.createDirectory(path + 'output/');

@@ -1,8 +1,8 @@
 import { Expose } from "class-transformer";
 import { IsDefined, IsNumber, IsOptional, IsPositive, Min, Validate } from "class-validator";
-import { ValidFileInputs } from "../../dtos/validators/pipeline-validators";
-import { InstructionArgsDTO } from "../../dtos/models/args-dto";
-import { InputFile } from "../../../types/input-file";
+import { ValidFileInputs } from "../../../dtos/validators/pipeline-validators";
+import { InstructionArgsDTO } from "../../../dtos/models/args-dto";
+import { InputFile } from "../../../../types/input-file";
 
 export class SegmentArgsDTO extends InstructionArgsDTO {
 

@@ -1,17 +1,21 @@
 import 'reflect-metadata';
-import { ClassTransformService } from "../services/plain-to-class/plain-to-class.service";
+import { ClassTransformService } from "../../services/plain-to-class/plain-to-class.service";
 import { ValidationError, isNumber } from 'class-validator';
-import { PipelineDTO } from './dtos/models/pipeline-dto';
-import { InstructionArgsDTO } from './dtos/models/args-dto';
+import { PipelineDTO } from '../dtos/models/pipeline-dto';
+import { InstructionArgsDTO } from '../dtos/models/args-dto';
+import { PipelineParserService } from '../../services/pipeline/pipeline-parser.service';
+import { logger } from '../../logger';
 
 type ErrorCallback = (message: string) => void;
 
 export class PipelineParser {
 
+    private parserService: PipelineParserService;
     private _inputPipeline: string;
 
     constructor(pipeline: string) {
         this._inputPipeline = pipeline;
+        this.parserService = PipelineParserService.getInstance();
     }
 
     public run(fail: ErrorCallback = () => {}): PipelineDTO {
@@ -22,13 +26,16 @@ export class PipelineParser {
         const pipelineDTO = ClassTransformService.plainToClass(PipelineDTO, json!);
         ClassTransformService.validate(pipelineDTO, this.handleValidationErrors);
 
+        // Reset the list of ids to validate
+        this.parserService.resetValidatedIds();
+
         return pipelineDTO;
     }
 
     private handleValidationErrors(errors: ValidationError[]) {
-        console.log("Error in pipeline:");
+        logger.error("Error in pipeline:");
         for (const error of errors) {
-            console.log(PipelineParser.formatValidationError(error));
+            logger.error(PipelineParser.formatValidationError(error));
         }
         process.exit(1);
     }

@@ -1,8 +1,8 @@
 import { InstructionDTO } from "../../classes/dtos/models/instruction-dto";
 import { StatementDTO } from "../../classes/dtos/models/statement-dto";
 import { StepDTO } from "../../classes/dtos/models/step-dto";
-import { SegmentDTO } from "../../classes/instructions/segment/segment-model";
-import { SplitDTO } from "../../classes/instructions/split/split-model";
+import { SegmentDTO } from "../../classes/pipeline/instructions/segment/segment-model";
+import { SplitDTO } from "../../classes/pipeline/instructions/split/split-model";
 import { EnumInstruction } from "../../enums/enum-instruction";
 import { EnumStepType } from "../../enums/enum-step-type";
 import { ClassTransformService } from "../plain-to-class/plain-to-class.service";
