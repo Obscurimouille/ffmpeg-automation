@@ -101,7 +101,7 @@ export class ValidFileInputs implements ValidatorConstraintInterface, Parse {
                 const selectorClass = SelectorService.resolve(input);
                 let selector;
                 try {
-                    selector = new selectorClass(input);
+                    selector = new selectorClass(input, []);
                 }
                 catch (error: any) {
                     return { success: false, message: error.message };
@@ -129,6 +129,28 @@ export class ValidFileInputs implements ValidatorConstraintInterface, Parse {
             }
         }
 
+        return { success: true };
+    }
+
+    validate(value: any, args: ValidationArguments): boolean {
+        const { success } = this.parse(value, args);
+        return success;
+    }
+
+    defaultMessage(args: ValidationArguments) {
+        const { message } = this.parse(args.value, args);
+        return message || '';
+    }
+}
+
+@ValidatorConstraint()
+export class ValidSelector implements ValidatorConstraintInterface, Parse {
+
+    parse(value: any, args: ValidationArguments): ParseResult {
+        // Check if the value is a selector
+        if (!SelectorService.isSelector(value)) {
+            return { success: false, message: `invalid selector!` };
+        }
         return { success: true };
     }
 

@@ -4,6 +4,8 @@ import { SegmentArgsDTO } from "./segment-args";
 import { InputFile } from "../../../../types/input-file";
 import { FfmpegService } from "../../../../services/ffmpeg/ffmpeg.service";
 import { EnumArchiveFilter } from "../../../../enums/enum-archive-filter";
+import { Instruction } from "../../../../decorators/instruction.decorator";
+import { ArchiveDTO } from "../../../dtos/models/archive";
 
 /**
  * Segment pipeline instruction.
@@ -14,11 +16,12 @@ import { EnumArchiveFilter } from "../../../../enums/enum-archive-filter";
  *  • startTime: The start time of the segment (in seconds)
  *  • duration: The duration of the segment (in seconds) (optional)
  */
+@Instruction({
+    identifier: 'segment',
+})
 export class Segment extends PipelineInstruction {
 
-    public static override readonly IDENTIFIER = EnumInstruction.SEGMENT;
-
-    constructor(id: number, args: SegmentArgsDTO, archive?: EnumArchiveFilter) {
+    constructor(id: number, args: SegmentArgsDTO, archive?: ArchiveDTO) {
         super(id, Segment.IDENTIFIER, args, archive);
     }
 
@@ -44,6 +47,11 @@ export class Segment extends PipelineInstruction {
                 })
                 .run();
         });
+    }
+
+    protected override newFilepath(): string {
+        const filename = `${this.id}-segement-output.mp4`;
+        return this._workspaceOutputDir + filename;
     }
 
 }

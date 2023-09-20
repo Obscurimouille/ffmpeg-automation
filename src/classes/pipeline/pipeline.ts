@@ -20,9 +20,8 @@ export class Pipeline {
 
         // Resolve each step
         for (const step of this.steps) {
-            step.init();
             // The array of steps is given in case the step needs another steps reference
-            step.startResolution(this.steps);
+            step.init(this.steps);
         }
 
         // Start each step

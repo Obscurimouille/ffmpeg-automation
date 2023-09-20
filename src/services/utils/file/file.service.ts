@@ -6,6 +6,18 @@ export class FileService {
     public static readonly VIDEO_EXTENSIONS = ['.mp4', '.mov', '.avi', '.mkv', '.webm', '.m4v'];
     public static readonly AUDIO_EXTENSIONS = ['.mp3', '.wav', '.ogg', '.m4a'];
 
+    // /**
+    //  * Rename a filename in a file path.
+    //  * @param filepath The file path
+    //  * @param newFilename The new filename
+    //  * @returns The file path with the new filename
+    //  * @example renameFilename('C:/foo/video.mp4', 'newVideo.mp4') => 'C:/foo/newVideo.mp4'
+    //  */
+    // public static renameFilename(filepath: string, newFilename: string): string {
+    //     const dirpath = path.dirname(filepath);
+    //     return dirpath + '/' + newFilename;
+    // }
+
     /**
      * Check if a file has a video extension.
      * @param filename The file name
@@ -132,9 +144,18 @@ export class FileService {
      * @param dirpath The directory path
      */
     public static createDirectory(dirpath: string): void {
-        if (!fs.existsSync(dirpath)) {
+        if (!FileService.directoryExists(dirpath)) {
             fs.mkdirSync(dirpath);
         }
+    }
+
+    /**
+     * Check if a directory exists.
+     * @param dirpath The directory path
+     * @returns Whether the directory exists
+     */
+    public static directoryExists(dirpath: string): boolean {
+        return fs.existsSync(dirpath);
     }
 
     /**

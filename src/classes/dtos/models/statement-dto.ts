@@ -1,4 +1,4 @@
-import { Expose } from "class-transformer";
+import { Expose, Type } from "class-transformer";
 import { IsDefined, IsEnum, ValidateNested } from "class-validator";
 import { StatementArgsDTO } from "./args-dto";
 import { StepDTO } from "./step-dto";
@@ -15,6 +15,7 @@ export class StatementDTO extends StepDTO {
 
     @Expose()
     @ValidateNested()
+    @Type(() => StatementArgsDTO)
     public override args!: StatementArgsDTO;
 
 }
