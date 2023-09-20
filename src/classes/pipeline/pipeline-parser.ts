@@ -24,8 +24,16 @@ export class PipelineParser {
         const json = this.parseInputPipeline();
 
         // Instanciate and validate pipeline DTO (without detailed instructions and statements)
-        const pipelineDTO = ClassTransformService.plainToClass(PipelineDTO, json!);
+        let pipelineDTO: PipelineDTO;
+        try {
+            pipelineDTO = ClassTransformService.plainToClass(PipelineDTO, json!);
+        }
+        catch (error: any) {
+            logger.error(error.message);
+            process.exit(1);
+        }
         await ClassTransformService.validate(pipelineDTO, this.handleValidationErrors);
+
 
         // Reset the list of ids to validate
         this.parserService.resetValidatedIds();

@@ -101,7 +101,7 @@ export class ValidFileInputs implements ValidatorConstraintInterface, Parse {
                 const selectorClass = SelectorService.resolve(input);
                 let selector;
                 try {
-                    selector = new selectorClass(input);
+                    selector = new selectorClass(input, []);
                 }
                 catch (error: any) {
                     return { success: false, message: error.message };
@@ -127,6 +127,43 @@ export class ValidFileInputs implements ValidatorConstraintInterface, Parse {
                     return { success: false, message: `input file must be an audio: ${input}` };
                 }
             }
+        }
+
+        return { success: true };
+    }
+
+    validate(value: any, args: ValidationArguments): boolean {
+        const { success } = this.parse(value, args);
+        return success;
+    }
+
+    defaultMessage(args: ValidationArguments) {
+        const { message } = this.parse(args.value, args);
+        return message || '';
+    }
+}
+
+@ValidatorConstraint()
+export class ValidSelector implements ValidatorConstraintInterface, Parse {
+
+    parse(value: any, args: ValidationArguments): ParseResult {
+        const options = args.constraints ? args.constraints[0] : null;
+
+        // Check if the value is a selector
+        if (!SelectorService.isSelector(value)) {
+            return { success: false, message: `invalid selector!` };
+        }
+
+        if (!options) return { success: true };
+        if (!options.expectedType) return { success: true };
+
+        // Check if the selector output type is valid
+        const selectorClass = SelectorService.resolve(value);
+        const selector = new selectorClass(value, []);
+        const expectedOutputType = selector.getExpectedOutputType();
+
+        if (expectedOutputType !== options.expectedType) {
+            return { success: false, message: `invalid selector params!` };
         }
 
         return { success: true };

@@ -7,6 +7,8 @@ import { SplitDTO } from "../../classes/pipeline/instructions/split/split-model"
 import { EnumInstruction } from "../../enums/enum-instruction";
 import { EnumStepType } from "../../enums/enum-step-type";
 import { ClassTransformService } from "../plain-to-class/plain-to-class.service";
+import { EnumStatement } from "../../enums/enum-statement";
+import { ForeachDTO } from "../../classes/pipeline/statement/foreach/foreach-model";
 
 export class PipelineDTOService {
 
@@ -57,6 +59,9 @@ export class PipelineDTOService {
         if (!statement.name) return plainToClass(StatementDTO, statement);
 
         switch (statement.name) {
+            case EnumStatement.FOREACH:
+                return ClassTransformService.plainToClass(ForeachDTO, statement);
+
             default: return plainToClass(StatementDTO, statement);
         }
     }

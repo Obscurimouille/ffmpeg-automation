@@ -1,5 +1,4 @@
 import { StepDTO } from '../../classes/dtos/models/step-dto';
-import { logger } from '../../logger';
 import { PipelineStep } from '../../classes/pipeline/pipeline-step';
 import { EnumStepType } from '../../enums/enum-step-type';
 import { InstructionService } from '../instruction/instruction.service';
@@ -7,15 +6,14 @@ import { RessourceService } from '../ressources/ressource.service';
 import { SelectorService } from '../selector/selector.service';
 import { StatementService } from '../statement/statement.service';
 import { FileService } from '../utils/file/file.service';
-import fs from 'fs';
 import { InstructionDTO } from '../../classes/dtos/models/instruction-dto';
-
-export enum EnumInputResolution {
-    STRING,
-    STEP_ID,
-}
-export type StepId = number;
-export type InputResolution = string[] | StepId[];
+import { InputFile } from '../../types/input-file';
+import { PipelineStatement } from '../../classes/pipeline/statement/pipeline-statement';
+import { ForeachDTO } from '../../classes/pipeline/statement/foreach/foreach-model';
+import { EnumStepStatus } from '../../enums/enum-step-status';
+import { EnumSelectorOutputType } from '../../enums/enum-selector-output-type';
+import fs from 'fs';
+import { Foreach } from '../../classes/pipeline/statement/foreach/foreach';
 
 export class StepService {
 
@@ -49,7 +47,7 @@ export class StepService {
 
             case EnumStepType.STATEMENT:
                 const statementClass = StatementService.resolve(step.name);
-                return new statementClass(step.id, step.args);
+                return new statementClass(step.id, step.args, (step as ForeachDTO).archive);
 
             default: throw new Error(`Unknown step type ${step.type}`);
         }
@@ -57,26 +55,26 @@ export class StepService {
 
     /**
      * Resolve the input of a step.
-     * - The input wan be a file path or a file selector (e.g. @step-1.output)
-     * - The ouput can be an array of file paths or an array of step ids
+     * - The input can be a file path or a file selector (e.g. @step-1:output)
+     *   - Selector can only refer to content promises (e.g. @step-1:output, not @step-1 wich refers to the step instance)
+     * - The ouput is an array of promise that resolves to a string array
      * @param input The input to resolve
+     * @param steps The steps of the pipeline (used for step selector)
+     * @param clientId The client id (used for step selector)
      * @returns The resolved input
      */
-    public static resolveInput(input: string): InputResolution {
+    public static resolveInput(input: string, steps: PipelineStep[], clientId?: number): Promise<InputFile[]>[] {
         // The input is a selector
-        if (input.includes('@')) {
+        if (SelectorService.isSelector(input)) {
             // Get the selector class
-            let selectorClass;
-            try {
-                selectorClass = SelectorService.resolve(input);
-            } catch (error: any) {
-                logger.error('Error:', error.message);
-                process.exit(1);
-            }
-
+            const selectorClass = SelectorService.resolve(input);
             // Resolve the selector to get either a string or a string array
-            const selector = new selectorClass(input);
-            return selector.resolve();
+            const selector = new selectorClass(input, steps, clientId);
+            if (selector.getExpectedOutputType() != EnumSelectorOutputType.CONTENT_PROMISES) {
+                throw new Error(`Selector ${input} is incompatible with step input`);
+            }
+            // Ensure the inputFile is only selector that do not return step instance
+            return selector.resolve().data as Promise<InputFile[]>[];
         }
 
         // The input is a file path
@@ -86,23 +84,92 @@ export class StepService {
                 throw new Error(`File ${path} not found`);
             }
             // Return the path as a string
-            return [path];
+            return [new Promise((resolve) => {
+                resolve([path]);
+            })];
         }
     }
 
     /**
-     * Find a step in an array of steps by its id.
+     * Find a step by its id in an array of steps.
      * @param steps The array of steps to search in
      * @param id The id of the step to find
-     * @returns The step if found, null otherwise
+     * @returns The step if found, undefined otherwise
      */
-    public static findStepById(steps: PipelineStep[], id: number): PipelineStep | null {
+    public static findStepById(steps: PipelineStep[], id: number): PipelineStep | undefined {
+        // For each step in the array
         for (const step of steps) {
-            if (step.id == id) {
-                return step;
+            // Check if the step has the id we are looking for
+            if (step.id == id) return step;
+            // Else check if the step has children steps
+            if (step instanceof Foreach && step.steps) {
+                // Recursively call this function on the children steps
+                const childStep = StepService.findStepById(step.steps, id);
+                // If the child step has been found, return it
+                if (childStep) return childStep;
             }
         }
-        return null;
+        return undefined;
+    }
+
+    /**
+     * Find the parent of a step in an array.
+     * - The parent is the step that contains the step in its children steps
+     * - The step is located via its id
+     * @param steps The array of steps to search in
+     * @param id The id of the step to find
+     * @param previousParent The previous parent of the step (used for recursion)
+     * @returns The step if found, undefined otherwise
+     */
+    public static findParent(steps: PipelineStep[], id: number, previousParent?: PipelineStatement): PipelineStatement | undefined {
+        // For each step in the array
+        for (const step of steps) {
+            // Check if the step has the id we are looking for
+            if (step.id == id) return previousParent;
+            // Else check if the step has children steps
+            if (step instanceof Foreach && step.steps) {
+                // Recursively call this function on the children steps
+                const parent = StepService.findParent(step.steps, id, step as PipelineStatement);
+                // If the child step has been found, return the parent
+                if (parent) return parent;
+            }
+        }
+        return undefined;
+    }
+
+    /**
+     * Wait for a list of steps to end.
+     * @param steps The steps to wait for
+     * @returns A promise that resolves when all the steps have ended
+     */
+    public static async waitForSteps(steps: PipelineStep[]): Promise<void> {
+        const promises = [];
+        for (const step of steps) {
+            promises.push(step.waitForStatus(EnumStepStatus.ENDED));
+        }
+        await Promise.all(promises);
+    }
+
+    /**
+     * Initialize a list of steps.
+     * An additional array of steps is given in case the step needs reference
+     * @param steps The steps to run init() on
+     * @param pipelineSteps The pipeline steps (used for step selector)
+     */
+    public static initSteps(steps: PipelineStep[], pipelineSteps?: PipelineStep[]): void {
+        for (const step of steps) {
+            step.init(pipelineSteps || steps);
+        }
+    }
+
+    /**
+     * Run a list of steps.
+     * @param steps The steps to run
+     */
+    public static runSteps(steps: PipelineStep[]): void {
+        for (const step of steps) {
+            step.run();
+        }
     }
 
 }

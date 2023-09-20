@@ -4,6 +4,8 @@ import { SplitArgsDTO } from "./split-args";
 import { InputFile } from "../../../../types/input-file";
 import { FfmpegService } from "../../../../services/ffmpeg/ffmpeg.service";
 import { EnumArchiveFilter } from "../../../../enums/enum-archive-filter";
+import { Instruction } from "../../../../decorators/instruction.decorator";
+import { ArchiveDTO } from "../../../dtos/models/archive";
 
 /**
  * Split pipeline instruction.
@@ -18,11 +20,12 @@ import { EnumArchiveFilter } from "../../../../enums/enum-archive-filter";
  *  • segmentDuration: The duration of each segment (in seconds) (optional)
  *  • nbSegments: The number of segments to split the video into (optional)
  */
+@Instruction({
+    identifier: 'split',
+})
 export class Split extends PipelineInstruction {
 
-    public static override readonly IDENTIFIER = EnumInstruction.SPLIT;
-
-    constructor(id: number, args: SplitArgsDTO, archive?: EnumArchiveFilter) {
+    constructor(id: number, args: SplitArgsDTO, archive?: ArchiveDTO) {
         super(id, Split.IDENTIFIER, args, archive);
     }
 
@@ -82,6 +85,11 @@ export class Split extends PipelineInstruction {
                     reject(err);
                 });
         });
+    }
+
+    protected override newFilepath(): string {
+        const filename = `${this.id}-split-output-${++this._outputFileIndex}.mp4`;
+        return this._workspaceOutputDir + filename;
     }
 
 }

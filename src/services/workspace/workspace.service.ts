@@ -11,6 +11,10 @@ export class WorkspaceService {
      */
     public static createStepFolder(id: number): string {
         const path = WorkspaceService.WORKSPACE_DIRECTORY + `step-${id}/`;
+        // If the folder already exists, clear it
+        if (FileService.directoryExists(path)) {
+            FileService.clearDirectory(path);
+        }
         FileService.createDirectory(path);
         FileService.createDirectory(path + 'input/');
         FileService.createDirectory(path + 'output/');
