@@ -1,5 +1,4 @@
 import { SelectorParent } from "../../classes/selectors/selector-parent";
-import { SelectorProject } from "../../classes/selectors/selector-project";
 import { SelectorStep } from "../../classes/selectors/selector-step";
 
 describe('stepSelectorRegex', () => {
@@ -35,21 +34,3 @@ describe('parentSelectorRegex', () => {
         });
     });
 });
-
-describe('projectSelectorRegex', () => {
-    const validProjectSelector = ['@project'];
-    const invalidProjectSelector = ['@project:', '@project:foo', ' @project', 'foo@project', '@PROJECT', '@projectfoo', '@project ', '@projectproject'];
-
-    validProjectSelector.forEach((input, index) => {
-        test(`Valid input test #${index + 1}`, () => {
-            expect(input).toMatch(SelectorProject.REGEX);
-        });
-    });
-
-    invalidProjectSelector.forEach((input, index) => {
-        test(`Invalid input test #${index + 1}`, () => {
-            expect(input).not.toMatch(SelectorProject.REGEX);
-        });
-    });
-});
-

@@ -1,14 +1,15 @@
-import { PipelineSelector, SelectorResponse } from "./selector";
+import { PipelineSelector } from "./selector";
 import { StepService } from "../../services/step/step.service";
 import { Selector } from "../../decorators/selector.decorator";
 import { PipelineStep } from "../pipeline/pipeline-step";
 import { InputFile } from "../../types/input-file";
+import { EnumSelectorOutputType } from "../../enums/enum-selector-output-type";
+import { SelectorResponse } from "../../types/selector";
 
 type SelectorStepParams = {
     targetId: number;
-    param: SelectorStepFilesParam;
+    param: 'output' | undefined;
 };
-type SelectorStepFilesParam = 'output';
 
 @Selector({
     regexp: /^@step-[0-9]+(?::|$)/
@@ -19,6 +20,8 @@ export class SelectorStep extends PipelineSelector {
      * Syntax :
      * - '@step-<id>:<tag>'
      * Examples :
+     * - Select the step instance
+     *   '@step-1'
      * - Select the output of the step 1
      *   '@step-1:output'
      */
@@ -27,7 +30,7 @@ export class SelectorStep extends PipelineSelector {
         super(input, steps);
     }
 
-    protected override parseParams(input: string): any {
+    protected override parseParams(input: string): SelectorStepParams {
         // Check if input is valid
         if (!SelectorStep.REGEX.test(input)) throw new Error(`Invalid step selector ${input}`);
 
@@ -48,6 +51,11 @@ export class SelectorStep extends PipelineSelector {
         return { targetId, param } as SelectorStepParams;
     }
 
+    public getExpectedOutputType(): EnumSelectorOutputType {
+        if (this.params.param) return EnumSelectorOutputType.CONTENT_PROMISES;
+        return EnumSelectorOutputType.STEP_INSTANCE;
+    }
+
     public override resolve(): SelectorResponse {
         // Find the step associated with the step id
         const associatedStep = StepService.findStepById(this.steps, this.params.targetId);
@@ -58,16 +66,16 @@ export class SelectorStep extends PipelineSelector {
 
         // If no parameter is specified, return the step instance
         if (!this.params.param) return {
-            type: 'step-instance',
+            type: EnumSelectorOutputType.STEP_INSTANCE,
             data: associatedStep
         };
 
         // If the parameter is 'output', return the step outputs
         return {
-            type: 'content-promises',
+            type: EnumSelectorOutputType.CONTENT_PROMISES,
             data: [
                 new Promise<InputFile[]>((resolve) => {
-                    associatedStep.processEnded.subscribe((outputs) => {
+                    associatedStep.endedSubject.subscribe((outputs) => {
                         resolve(outputs);
                     });
                 }

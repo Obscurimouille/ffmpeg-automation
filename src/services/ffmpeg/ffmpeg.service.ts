@@ -1,7 +1,6 @@
 import ffmpeg from 'fluent-ffmpeg';
 import pathToFfmpeg from 'ffmpeg-static';
-
-export type FfmpegCommandObject = ffmpeg.FfmpegCommand;
+import { FfmpegCommandObject } from '../../types/ffmpeg';
 
 export class FfmpegService {
 

@@ -8,7 +8,7 @@ import { PipelineInstruction } from "./classes/pipeline/instructions/pipeline-in
 import { Segment } from "./classes/pipeline/instructions/segment/segment";
 import { Split } from "./classes/pipeline/instructions/split/split";
 
-export const SELECTORS: typeof PipelineSelector[] = [
+export const SELECTORS: ClassConstructor<PipelineSelector>[] = [
     SelectorStep,
     SelectorParent,
 ];

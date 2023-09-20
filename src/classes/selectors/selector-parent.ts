@@ -1,13 +1,14 @@
-import { PipelineSelector, SelectorResponse } from "./selector";
+import { PipelineSelector } from "./selector";
 import { Selector } from "../../decorators/selector.decorator";
 import { PipelineStep } from "../pipeline/pipeline-step";
 import { InputFile } from "../../types/input-file";
 import { StepService } from "../../services/step/step.service";
+import { EnumSelectorOutputType } from "../../enums/enum-selector-output-type";
+import { SelectorResponse } from "../../types/selector";
 
 type SelectorParentParams = {
-    param: SelectorParentFilesParam;
+    param: 'item' | undefined;
 };
-type SelectorParentFilesParam = 'item';
 
 @Selector({
     regexp: /^@parent+(?::|$)/
@@ -18,6 +19,8 @@ export class SelectorParent extends PipelineSelector {
      * Syntax :
      * - '@parent:<tag>'
      * Examples :
+     * - Select the parent step
+     *   '@parent'
      * - Select the current element of a parent loop
      *   '@parent:element'
      */
@@ -26,9 +29,7 @@ export class SelectorParent extends PipelineSelector {
         super(input, steps, clientId);
     }
 
-    protected override parseParams(input: string): any {
-        console.log(`\n- SELECTOR for ${this.clientId} parse params...`);
-        console.log(`- input ${input}\n`);
+    protected override parseParams(input: string): SelectorParentParams {
         // Check if input is valid
         if (!SelectorParent.REGEX.test(input)) throw new Error(`Invalid parent selector ${input}`);
 
@@ -45,10 +46,12 @@ export class SelectorParent extends PipelineSelector {
         return { param } as SelectorParentParams;
     }
 
+    public getExpectedOutputType(): EnumSelectorOutputType {
+        if (this.params.param) return EnumSelectorOutputType.CONTENT_PROMISES;
+        return EnumSelectorOutputType.STEP_INSTANCE;
+    }
+
     public override resolve(): SelectorResponse {
-        console.log(`\n- SELECTOR for ${this.clientId} resolve...`);
-        console.log(this.params);
-        console.log('\n');
         // Find the step associated with the step id
         const parent = StepService.findParent(this.steps, this.clientId!);
 
@@ -58,13 +61,13 @@ export class SelectorParent extends PipelineSelector {
 
         // If no parameter is specified, return the parent instance
         if (!this.params.param) return {
-            type: 'step-instance',
+            type: EnumSelectorOutputType.STEP_INSTANCE,
             data: parent
         };
 
         // If the parameter is 'item', return step current item
         return {
-            type: 'content-promises',
+            type: EnumSelectorOutputType.CONTENT_PROMISES,
             data: [
                 new Promise<InputFile[]>((resolve) => {
                     resolve([parent.currentItem]);

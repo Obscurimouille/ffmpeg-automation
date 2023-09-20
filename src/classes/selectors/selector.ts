@@ -1,12 +1,8 @@
-import { InputFile } from "../../types/input-file";
+import { EnumSelectorOutputType } from "../../enums/enum-selector-output-type";
+import { SelectorResponse } from "../../types/selector";
 import { PipelineStep } from "../pipeline/pipeline-step";
 
-export type SelectorResponse = {
-    type: 'step-instance' | 'content-promises';
-    data: PipelineStep | (Promise<InputFile[]>[]);
-}
-
-export class PipelineSelector {
+export abstract class PipelineSelector {
 
     public static REGEX: RegExp;
 
@@ -26,13 +22,26 @@ export class PipelineSelector {
         this.params = this.parseParams(input);
     }
 
-    protected parseParams(input: string): any {
-        throw new Error('Not implemented');
-    }
+    /**
+     * Parse the input string to extract the parameters.
+     * @param input The input string
+     * @returns The parameters
+     */
+    protected abstract parseParams(input: string): any;
 
-    public resolve(): SelectorResponse {
-        throw new Error('Not implemented');
-    }
+    /**
+     * Get the expected output type of the selector depending on parameters.
+     * - Must be implemented by child classes
+     * @returns The expected output type
+     */
+    public abstract getExpectedOutputType(): EnumSelectorOutputType;
+
+    /**
+     * Resolve the selector.
+     * - Must be implemented by child classes
+     * @returns The selector response
+     */
+    public abstract resolve(): SelectorResponse;
 
     public getParams(): any {
         return this.params;

@@ -24,41 +24,31 @@ import { ArchiveDTO } from "../../../dtos/models/archive";
 })
 export class Foreach extends PipelineStatement {
 
-    private steps: PipelineStep[] = [];
+    public steps: PipelineStep[] = [];
     private currentLoopItem!: InputFile;
 
     constructor(id: number, args: ForeachArgsDTO, archive?: ArchiveDTO) {
         super(id, Foreach.IDENTIFIER, args, archive);
-        // Instanciate the steps
-        this.steps = StepService.instanciateSteps(args.steps);
+        this.steps = StepService.instanciateSteps(this.args.steps);
     }
 
     public override async process(): Promise<string[]> {
         console.log(`- Step ${this.id} process...`);
 
         for (const input of this._inputs) {
-            console.log(`- Step ${this.id} loop item ${input} ->`);
-
-            const promises: Promise<void>[] = [];
             this.currentLoopItem = input;
+            // Instanciate the steps
+            this.steps = StepService.instanciateSteps(this.args.steps);
 
-            for (const step of this.steps) {
-                step.init(this._pipelineSteps);
-            }
+            StepService.initSteps(this.steps, this._pipelineSteps);
+            StepService.runSteps(this.steps);
 
-            for (const step of this.steps) {
-                promises.push(step.run());
-            }
-
-            await Promise.all(promises);
+            await StepService.waitForSteps(this.steps);
         }
         return [];
     }
 
     public override get currentItem(): InputFile {
-        console.log(`- Step ${this.id} get current item...`);
-        console.log(this.currentLoopItem);
-        console.log('\n');
         return this.currentLoopItem;
     }
 

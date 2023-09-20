@@ -1,3 +1,4 @@
+import { ClassConstructor } from "class-transformer";
 import { PipelineSelector } from "../../classes/selectors/selector";
 import { SELECTORS } from "../../declaration";
 
@@ -8,13 +9,9 @@ export class SelectorService {
      * @param input The input to resolve
      * @returns The selector class
      */
-    public static resolve(input: string): typeof PipelineSelector {
-        const selectorClass = SELECTORS.find((selector) => selector.REGEX.test(input));
-
-        if (!selectorClass) {
-            throw new Error(`No selector found for ${input}`);
-        }
-
+    public static resolve(input: string): ClassConstructor<PipelineSelector> {
+        const selectorClass = SELECTORS.find((selector: ClassConstructor<PipelineSelector>) => (selector as any).REGEX.test(input));
+        if (!selectorClass) throw new Error(`No selector found for ${input}`);
         return selectorClass;
     }
 
