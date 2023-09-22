@@ -1,4 +1,4 @@
-import { RessourceService } from "./services/ressources/ressource.service";
+import { ResourceService } from "./services/resources/resource.service";
 import { FfmpegService } from "./services/ffmpeg/ffmpeg.service";
 import { PipelineParser } from "./classes/pipeline/pipeline-parser";
 import { Pipeline } from "./classes/pipeline/pipeline";
@@ -8,7 +8,7 @@ async function main(): Promise<void> {
 
     init();
 
-    const pipelineFile = RessourceService.getPipeline();
+    const pipelineFile = ResourceService.getPipeline();
 
     if (!pipelineFile) throw new Error("Error: Could not find pipeline file");
 
@@ -17,7 +17,7 @@ async function main(): Promise<void> {
         throw new Error(`Error: ${errorMessage}`);
     });
 
-    RessourceService.clearOutputDirectory();
+    ResourceService.clearOutputDirectory();
 
     const pipeline = new Pipeline(pipelineDTO);
 

@@ -3,9 +3,6 @@ import fs from 'fs';
 
 export class FileService {
 
-    public static readonly VIDEO_EXTENSIONS = ['.mp4', '.mov', '.avi', '.mkv', '.webm', '.m4v'];
-    public static readonly AUDIO_EXTENSIONS = ['.mp3', '.wav', '.ogg', '.m4a'];
-
     // /**
     //  * Rename a filename in a file path.
     //  * @param filepath The file path
@@ -19,39 +16,14 @@ export class FileService {
     // }
 
     /**
-     * Check if a file has a video extension.
-     * @param filename The file name
-     * @returns Whether the file has a video extension
-     */
-    public static hasVideoExtension(filename: string): boolean {
-        const extension = FileService.getExtension(filename);
-        if (!extension) return false;
-        return FileService.VIDEO_EXTENSIONS.includes(extension);
-    }
-
-    /**
-     * Check if a file has an audio extension.
-     * @param filename The file name
-     * @returns Whether the file has an audio extension
-     */
-    public static hasAudioExtension(filename: string): boolean {
-        const extension = FileService.getExtension(filename);
-        if (!extension) return false;
-        return FileService.AUDIO_EXTENSIONS.includes(extension);
-    }
-
-    /**
      * Get the extension of a file.
      * @param filename The file name
      * @returns The file extension or undefined if the file has no extension
-     * @example getExtension('video.mp4') => '.mp4'
+     * @example getExtension('video.mp4') => 'mp4'
      */
     public static getExtension(filename: string): string | undefined {
-        const lastIndex = filename.lastIndexOf('.');
-        if (lastIndex !== -1) {
-            return filename.slice(lastIndex);
-        }
-        return undefined;
+        const extension = filename.split('.').pop();
+        return extension;
     }
 
     /**
@@ -106,7 +78,10 @@ export class FileService {
         for (const file of files) {
             const filepath = dirpath + file;
 
-            if (!recursive) return callback(filepath);
+            if (!recursive) {
+                callback(filepath);
+                continue;
+            }
 
             // Recursively call the function if the file is a directory
             const stats = fs.statSync(filepath);
@@ -115,6 +90,22 @@ export class FileService {
             }
             else callback(filepath);
         }
+    }
+
+    /**
+     * Get all files in a directory and its subdirectories.
+     * @param dirpath The directory path
+     * @param recursive Whether to loop through subdirectories (default: false)
+     * @returns The list of files
+     */
+    public static getFilesInDirectory(dirpath: string, recursive: boolean = false): string[] {
+        let files: string[] = [];
+
+        FileService.forEachFile(dirpath, (filepath) => {
+            files.push(filepath);
+        }, recursive);
+
+        return files;
     }
 
     /**

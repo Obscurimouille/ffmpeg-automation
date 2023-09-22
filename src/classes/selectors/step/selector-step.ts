@@ -1,10 +1,10 @@
-import { PipelineSelector } from "./selector";
-import { StepService } from "../../services/step/step.service";
-import { Selector } from "../../decorators/selector.decorator";
-import { PipelineStep } from "../pipeline/pipeline-step";
-import { InputFile } from "../../types/input-file";
-import { EnumSelectorOutputType } from "../../enums/enum-selector-output-type";
-import { SelectorResponse } from "../../types/selector";
+import { PipelineSelector } from "../selector";
+import { StepService } from "../../../services/step/step.service";
+import { Selector } from "../../../decorators/selector.decorator";
+import { PipelineStep } from "../../pipeline/pipeline-step";
+import { InputFile } from "../../../types/input-file";
+import { EnumSelectorOutputType } from "../../../enums/enum-selector-output-type";
+import { SelectorResponse } from "../../../types/selector";
 
 type SelectorStepParams = {
     targetId: number;
@@ -35,8 +35,8 @@ export class SelectorStep extends PipelineSelector {
         if (!SelectorStep.REGEX.test(input)) throw new Error(`Invalid step selector ${input}`);
 
         // Split the different parts
-        const inputSections = input.split(':');
-        if (inputSections.length > 2) throw new Error(`Invalid step selector parameters ${input}`);
+        const inputSections = input.split(':').filter((section) => section.length > 0);
+        if (inputSections.length > 2) throw new Error(`Invalid step selector parameters ${input}. Too many parameters.`);
 
         // Parse the step id
         const targetId = Number(inputSections[0].replace('@step-', ''));

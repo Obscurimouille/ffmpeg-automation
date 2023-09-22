@@ -1,6 +1,7 @@
 import { ClassConstructor } from "class-transformer";
 import { PipelineSelector } from "../../classes/selectors/selector";
 import { SELECTORS } from "../../declaration";
+import { EnumComparator } from "../../enums/enum-comparator";
 
 export class SelectorService {
 
@@ -28,6 +29,23 @@ export class SelectorService {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Compare two numbers using a comparator.
+     * @param a The first number
+     * @param comparator The comparator
+     * @param b The second number
+     * @returns Whether the comparison is true
+     */
+    public static compare(a: number, comparator: EnumComparator, b: number): boolean {
+        switch (comparator) {
+            case EnumComparator.EQUAL: return a == b;
+            case EnumComparator.GREATER: return a > b;
+            case EnumComparator.GREATER_OR_EQUAL: return a >= b;
+            case EnumComparator.LESS: return a < b;
+            case EnumComparator.LESS_OR_EQUAL: return a <= b;
+        }
     }
 
 }

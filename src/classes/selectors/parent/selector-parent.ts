@@ -1,10 +1,10 @@
-import { PipelineSelector } from "./selector";
-import { Selector } from "../../decorators/selector.decorator";
-import { PipelineStep } from "../pipeline/pipeline-step";
-import { InputFile } from "../../types/input-file";
-import { StepService } from "../../services/step/step.service";
-import { EnumSelectorOutputType } from "../../enums/enum-selector-output-type";
-import { SelectorResponse } from "../../types/selector";
+import { PipelineSelector } from "../selector";
+import { Selector } from "../../../decorators/selector.decorator";
+import { PipelineStep } from "../../pipeline/pipeline-step";
+import { InputFile } from "../../../types/input-file";
+import { StepService } from "../../../services/step/step.service";
+import { EnumSelectorOutputType } from "../../../enums/enum-selector-output-type";
+import { SelectorResponse } from "../../../types/selector";
 
 type SelectorParentParams = {
     param: 'item' | undefined;
@@ -34,8 +34,8 @@ export class SelectorParent extends PipelineSelector {
         if (!SelectorParent.REGEX.test(input)) throw new Error(`Invalid parent selector ${input}`);
 
         // Split the different parts
-        const inputSections = input.split(':');
-        if (inputSections.length > 2) throw new Error(`Invalid parent selector parameters ${input}`);
+        const inputSections = input.split(':').filter((section) => section.length > 0);
+        if (inputSections.length > 2) throw new Error(`Invalid parent selector parameters ${input}. Too many parameters.`);
 
         // Parse the parameter
         const param = inputSections.length == 2 ? inputSections[1] : undefined;

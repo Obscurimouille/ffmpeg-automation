@@ -4,7 +4,7 @@ import { WorkspaceService } from "../../services/workspace/workspace.service";
 import { EnumStepType } from "../../enums/enum-step-type";
 import { InputFile } from "../../types/input-file";
 import { ArchiveDTO } from "../dtos/models/archive";
-import { RessourceService } from "../../services/ressources/ressource.service";
+import { ResourceService } from "../../services/resources/resource.service";
 import { ArchiveService } from "../../services/archive/archive.service";
 import { SelectorService } from "../../services/selector/selector.service";
 import { FileService } from "../../services/utils/file/file.service";
@@ -129,7 +129,7 @@ export abstract class PipelineStep {
 
         // If no target is specified, archive the files in the project output folder
         if (!this.archiveOptions.target) {
-            RessourceService.archiveFiles(filteredFiles);
+            ResourceService.archiveFiles(filteredFiles);
             return;
         }
 
