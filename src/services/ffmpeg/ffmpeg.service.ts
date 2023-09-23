@@ -1,7 +1,6 @@
 import ffmpeg from 'fluent-ffmpeg';
 import pathToFfmpeg from 'ffmpeg-static';
-
-export type FfmpegCommandObject = ffmpeg.FfmpegCommand;
+import { FfmpegCommandObject } from '../../types/ffmpeg';
 
 export class FfmpegService {
 
@@ -18,11 +17,11 @@ export class FfmpegService {
         return ffmpeg();
     }
 
-    public static probe(file: string, onError: (error: any) => void): Promise<ffmpeg.FfprobeData> {
+    public static probe(file: string, onError?: (error: any) => void): Promise<ffmpeg.FfprobeData> {
         return new Promise((resolve, reject) => {
             ffmpeg.ffprobe(file, (err, data) => {
                 if (err) {
-                    onError(err);
+                    if (onError) onError(err);
                     resolve({} as ffmpeg.FfprobeData);
                 }
                 else resolve(data);
@@ -30,4 +29,18 @@ export class FfmpegService {
         });
     }
 
+    public static getDuration(file: string, onError?: (error: any) => void): Promise<number | undefined> {
+        return new Promise((resolve, reject) => {
+            ffmpeg.ffprobe(file, (err, data) => {
+                if (err) {
+                    if (onError) onError(err);
+                    resolve(undefined);
+                }
+                else resolve(data.format.duration);
+            });
+        });
+    }
 }
+
+// Initialize ffmpeg
+FfmpegService.init();

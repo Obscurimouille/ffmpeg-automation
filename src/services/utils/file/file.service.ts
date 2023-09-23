@@ -3,43 +3,27 @@ import fs from 'fs';
 
 export class FileService {
 
-    public static readonly VIDEO_EXTENSIONS = ['.mp4', '.mov', '.avi', '.mkv', '.webm', '.m4v'];
-    public static readonly AUDIO_EXTENSIONS = ['.mp3', '.wav', '.ogg', '.m4a'];
-
-    /**
-     * Check if a file has a video extension.
-     * @param filename The file name
-     * @returns Whether the file has a video extension
-     */
-    public static hasVideoExtension(filename: string): boolean {
-        const extension = FileService.getExtension(filename);
-        if (!extension) return false;
-        return FileService.VIDEO_EXTENSIONS.includes(extension);
-    }
-
-    /**
-     * Check if a file has an audio extension.
-     * @param filename The file name
-     * @returns Whether the file has an audio extension
-     */
-    public static hasAudioExtension(filename: string): boolean {
-        const extension = FileService.getExtension(filename);
-        if (!extension) return false;
-        return FileService.AUDIO_EXTENSIONS.includes(extension);
-    }
+    // /**
+    //  * Rename a filename in a file path.
+    //  * @param filepath The file path
+    //  * @param newFilename The new filename
+    //  * @returns The file path with the new filename
+    //  * @example renameFilename('C:/foo/video.mp4', 'newVideo.mp4') => 'C:/foo/newVideo.mp4'
+    //  */
+    // public static renameFilename(filepath: string, newFilename: string): string {
+    //     const dirpath = path.dirname(filepath);
+    //     return dirpath + '/' + newFilename;
+    // }
 
     /**
      * Get the extension of a file.
      * @param filename The file name
      * @returns The file extension or undefined if the file has no extension
-     * @example getExtension('video.mp4') => '.mp4'
+     * @example getExtension('video.mp4') => 'mp4'
      */
     public static getExtension(filename: string): string | undefined {
-        const lastIndex = filename.lastIndexOf('.');
-        if (lastIndex !== -1) {
-            return filename.slice(lastIndex);
-        }
-        return undefined;
+        const extension = filename.split('.').pop();
+        return extension;
     }
 
     /**
@@ -76,11 +60,14 @@ export class FileService {
     /**
      * Get the filename of a file path.
      * @param filepath The file path
+     * @param keepExtension Whether to keep the extension (default: true)
      * @returns The filename
      * @example getFilename('C:/Users/JohnDoe/Desktop/video.mp4') => 'video.mp4'
      */
-    public static getFilename(filepath: string): string {
-        return path.basename(filepath);
+    public static getFilename(filepath: string, keepExtension: boolean = true): string {
+        const filename = path.basename(filepath);
+        if (keepExtension) return filename;
+        return filename.split('.')[0];
     }
 
     /**
@@ -94,7 +81,10 @@ export class FileService {
         for (const file of files) {
             const filepath = dirpath + file;
 
-            if (!recursive) return callback(filepath);
+            if (!recursive) {
+                callback(filepath);
+                continue;
+            }
 
             // Recursively call the function if the file is a directory
             const stats = fs.statSync(filepath);
@@ -103,6 +93,22 @@ export class FileService {
             }
             else callback(filepath);
         }
+    }
+
+    /**
+     * Get all files in a directory and its subdirectories.
+     * @param dirpath The directory path
+     * @param recursive Whether to loop through subdirectories (default: false)
+     * @returns The list of files
+     */
+    public static getFilesInDirectory(dirpath: string, recursive: boolean = false): string[] {
+        let files: string[] = [];
+
+        FileService.forEachFile(dirpath, (filepath) => {
+            files.push(filepath);
+        }, recursive);
+
+        return files;
     }
 
     /**
@@ -132,9 +138,18 @@ export class FileService {
      * @param dirpath The directory path
      */
     public static createDirectory(dirpath: string): void {
-        if (!fs.existsSync(dirpath)) {
+        if (!FileService.directoryExists(dirpath)) {
             fs.mkdirSync(dirpath);
         }
+    }
+
+    /**
+     * Check if a directory exists.
+     * @param dirpath The directory path
+     * @returns Whether the directory exists
+     */
+    public static directoryExists(dirpath: string): boolean {
+        return fs.existsSync(dirpath);
     }
 
     /**
@@ -186,7 +201,7 @@ export class FileService {
      */
     public static isValidFilename(filename: any): boolean {
         if (typeof filename !== 'string') return false;
-        const validFilenameRegex = /^[a-zA-Z0-9_]+\.[a-zA-Z0-9]+$/;
+        const validFilenameRegex = /^[a-zA-Z0-9_-]+\.[a-zA-Z0-9]+$/;
         return validFilenameRegex.test(filename);
     }
 

@@ -4,7 +4,7 @@ describe('isValidPath', () => {
     const validPaths = [
         '/path/to/valid',
         '/another_valid_path/file.txt',
-        'relative_path/file.txt',
+        'relative-path/file-foo.txt',
     ];
 
     const invalidPaths = [
@@ -31,6 +31,7 @@ describe('isValidFilename', () => {
         'example.txt',
         '1.jpg',
         'my_file_name_with_underscore.txt',
+        'my-file.txt',
     ];
 
     const invalidFilenames = [

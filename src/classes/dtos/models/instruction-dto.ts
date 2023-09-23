@@ -1,9 +1,9 @@
-import { Expose } from "class-transformer";
+import { Expose, Type } from "class-transformer";
 import { IsDefined, IsEnum, IsOptional, ValidateNested } from "class-validator";
 import { InstructionArgsDTO } from "./args-dto";
 import { StepDTO } from "./step-dto";
 import { EnumInstruction } from "../../../enums/enum-instruction";
-import { EnumArchiveFilter } from "../../../enums/enum-archive-filter";
+import { ArchiveDTO } from "./archive";
 
 export class InstructionDTO extends StepDTO {
 
@@ -16,11 +16,13 @@ export class InstructionDTO extends StepDTO {
 
     @Expose()
     @ValidateNested()
+    @Type(() => InstructionArgsDTO)
     public override args!: InstructionArgsDTO;
 
     @Expose()
     @IsOptional()
-    @IsEnum(EnumArchiveFilter)
-    public archive?: EnumArchiveFilter;
+    @ValidateNested()
+    @Type(() => ArchiveDTO)
+    public archive?: ArchiveDTO;
 
 }

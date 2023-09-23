@@ -13,6 +13,7 @@ export class PipelineDTO {
     @ValidateNested()
     @Type(() => StepDTO)
     @Transform(({value}) => {
+        // TODO: The property 'steps' is not checked before transformation.
         return value.map((element: StepDTO) => PipelineDTOService.toStepChildDTO(element));
     })
     public steps!: StepDTO[];
