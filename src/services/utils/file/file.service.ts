@@ -201,7 +201,7 @@ export class FileService {
      */
     public static isValidFilename(filename: any): boolean {
         if (typeof filename !== 'string') return false;
-        const validFilenameRegex = /^[a-zA-Z0-9_]+\.[a-zA-Z0-9]+$/;
+        const validFilenameRegex = /^[a-zA-Z0-9_-]+\.[a-zA-Z0-9]+$/;
         return validFilenameRegex.test(filename);
     }
 
