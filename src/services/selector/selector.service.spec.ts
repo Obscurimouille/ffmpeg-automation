@@ -1,5 +1,5 @@
-import { SelectorParent } from "../../classes/selectors/selector-parent";
-import { SelectorStep } from "../../classes/selectors/selector-step";
+import { SelectorParent } from "../../classes/selectors/parent/selector-parent";
+import { SelectorStep } from "../../classes/selectors/step/selector-step";
 
 describe('stepSelectorRegex', () => {
     const validStepSelector = ['@step-100', '@step-1', '@step-1:', '@step-1:foo'];

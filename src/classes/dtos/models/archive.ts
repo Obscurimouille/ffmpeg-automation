@@ -1,6 +1,6 @@
 import { Expose } from "class-transformer";
 import { IsEnum, IsOptional, Validate } from "class-validator";
-import { EnumArchiveFilter } from "../../../enums/enum-archive-filter";
+import { EnumFileTypeFilter } from "../../../enums/enum-file-type-filter";
 import { ValidSelector } from "../../validators/pipeline-validators";
 import { EnumSelectorOutputType } from "../../../enums/enum-selector-output-type";
 
@@ -13,7 +13,7 @@ export class ArchiveDTO {
 
     @Expose()
     @IsOptional()
-    @IsEnum(EnumArchiveFilter)
-    public filter?: EnumArchiveFilter
+    @IsEnum(EnumFileTypeFilter)
+    public filter?: EnumFileTypeFilter
 
 }

@@ -2,7 +2,7 @@ import { StepDTO } from '../../classes/dtos/models/step-dto';
 import { PipelineStep } from '../../classes/pipeline/pipeline-step';
 import { EnumStepType } from '../../enums/enum-step-type';
 import { InstructionService } from '../instruction/instruction.service';
-import { RessourceService } from '../ressources/ressource.service';
+import { ResourceService } from '../resources/resource.service';
 import { SelectorService } from '../selector/selector.service';
 import { StatementService } from '../statement/statement.service';
 import { FileService } from '../utils/file/file.service';
@@ -12,8 +12,8 @@ import { PipelineStatement } from '../../classes/pipeline/statement/pipeline-sta
 import { ForeachDTO } from '../../classes/pipeline/statement/foreach/foreach-model';
 import { EnumStepStatus } from '../../enums/enum-step-status';
 import { EnumSelectorOutputType } from '../../enums/enum-selector-output-type';
-import fs from 'fs';
 import { Foreach } from '../../classes/pipeline/statement/foreach/foreach';
+import fs from 'fs';
 
 export class StepService {
 
@@ -70,6 +70,7 @@ export class StepService {
             const selectorClass = SelectorService.resolve(input);
             // Resolve the selector to get either a string or a string array
             const selector = new selectorClass(input, steps, clientId);
+            selector.init();
             if (selector.getExpectedOutputType() != EnumSelectorOutputType.CONTENT_PROMISES) {
                 throw new Error(`Selector ${input} is incompatible with step input`);
             }
@@ -79,7 +80,7 @@ export class StepService {
 
         // The input is a file path
         else {
-            const path = RessourceService.INPUT_DIRECTORY + input;
+            const path = ResourceService.INPUT_DIRECTORY + input;
             if (!fs.existsSync(path)) {
                 throw new Error(`File ${path} not found`);
             }

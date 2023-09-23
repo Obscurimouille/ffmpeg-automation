@@ -4,7 +4,7 @@ import { WorkspaceService } from "../../services/workspace/workspace.service";
 import { EnumStepType } from "../../enums/enum-step-type";
 import { InputFile } from "../../types/input-file";
 import { ArchiveDTO } from "../dtos/models/archive";
-import { RessourceService } from "../../services/ressources/ressource.service";
+import { ResourceService } from "../../services/resources/resource.service";
 import { ArchiveService } from "../../services/archive/archive.service";
 import { SelectorService } from "../../services/selector/selector.service";
 import { FileService } from "../../services/utils/file/file.service";
@@ -123,23 +123,24 @@ export abstract class PipelineStep {
      *
      * @param files The list of files to archive
      */
-    private archive(files: string[]): void {
+    private async archive(files: string[]): Promise<void> {
         if (!this.archiveOptions) return;
         const filteredFiles = ArchiveService.filterFiles(files, this.archiveOptions.filter);
 
         // If no target is specified, archive the files in the project output folder
         if (!this.archiveOptions.target) {
-            RessourceService.archiveFiles(filteredFiles);
+            ResourceService.archiveFiles(filteredFiles);
             return;
         }
 
         const selectorClass = SelectorService.resolve(this.archiveOptions.target);
         const selector = new selectorClass(this.archiveOptions.target, this._pipelineSteps, this.id);
+        selector.init();
         if (selector.getExpectedOutputType() !== EnumSelectorOutputType.STEP_INSTANCE) {
             throw new Error(`Invalid archive target for step ${this.id}. The selector must target an instance of a step.`);
         }
 
-        const target = selector.resolve().data as PipelineStep;
+        const target = (await selector.resolve().data) as PipelineStep;
         target.addExternalOutputFiles(files);
     }
 

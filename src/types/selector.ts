@@ -4,5 +4,5 @@ import { InputFile } from "./input-file";
 
 export type SelectorResponse = {
     type: EnumSelectorOutputType;
-    data: PipelineStep | (Promise<InputFile[]>[]);
+    data: Promise<PipelineStep> | Promise<InputFile[]>[];
 };

@@ -1,9 +1,7 @@
 import { PipelineInstruction } from "../pipeline-instruction";
-import { EnumInstruction } from "../../../../enums/enum-instruction";
 import { SplitArgsDTO } from "./split-args";
 import { InputFile } from "../../../../types/input-file";
 import { FfmpegService } from "../../../../services/ffmpeg/ffmpeg.service";
-import { EnumArchiveFilter } from "../../../../enums/enum-archive-filter";
 import { Instruction } from "../../../../decorators/instruction.decorator";
 import { ArchiveDTO } from "../../../dtos/models/archive";
 

@@ -5,6 +5,7 @@ import { EnumStatement } from "../../enums/enum-statement";
 import { FileService } from "../../services/utils/file/file.service";
 import { SelectorService } from "../../services/selector/selector.service";
 import { PipelineParserService } from "../../services/pipeline/pipeline-parser.service";
+import { ResourceService } from "../../services/resources/resource.service";
 
 interface Parse {
     parse(value: any, args: ValidationArguments): ParseResult;
@@ -102,6 +103,7 @@ export class ValidFileInputs implements ValidatorConstraintInterface, Parse {
                 let selector;
                 try {
                     selector = new selectorClass(input, []);
+                    selector.init();
                 }
                 catch (error: any) {
                     return { success: false, message: error.message };
@@ -117,13 +119,13 @@ export class ValidFileInputs implements ValidatorConstraintInterface, Parse {
             }
 
             if (options.videoOnly) {
-                if (!SelectorService.isSelector(input) && !FileService.hasVideoExtension(input)) {
+                if (!SelectorService.isSelector(input) && !ResourceService.hasVideoExtension(input)) {
                     return { success: false, message: `input file must be a video: ${input}` };
                 }
             }
 
             if (options.audioOnly) {
-                if (!SelectorService.isSelector(input) && !FileService.hasAudioExtension(input)) {
+                if (!SelectorService.isSelector(input) && !ResourceService.hasAudioExtension(input)) {
                     return { success: false, message: `input file must be an audio: ${input}` };
                 }
             }
@@ -160,6 +162,7 @@ export class ValidSelector implements ValidatorConstraintInterface, Parse {
         // Check if the selector output type is valid
         const selectorClass = SelectorService.resolve(value);
         const selector = new selectorClass(value, []);
+        selector.init();
         const expectedOutputType = selector.getExpectedOutputType();
 
         if (expectedOutputType !== options.expectedType) {
