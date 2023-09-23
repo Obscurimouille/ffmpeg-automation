@@ -2,7 +2,6 @@ import { FileService } from '../utils/file/file.service';
 
 export class ResourceService {
 
-    public static readonly PIPELINE_PATH = './resources/pipeline.json';
     public static readonly INPUT_DIRECTORY = './resources/input/';
     public static readonly OUTPUT_DIRECTORY = './resources/output/';
 
@@ -31,14 +30,6 @@ export class ResourceService {
         const extension = FileService.getExtension(filename);
         if (!extension) return false;
         return ResourceService.AUDIO_EXTENSIONS.includes(extension);
-    }
-
-    /**
-     * Get the input pipeline file from the resources folder.
-     * @returns The pipeline file as a string
-     */
-    public static getPipeline(): string | null {
-        return FileService.getFile(ResourceService.PIPELINE_PATH);
     }
 
     /**
