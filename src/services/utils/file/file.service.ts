@@ -60,11 +60,14 @@ export class FileService {
     /**
      * Get the filename of a file path.
      * @param filepath The file path
+     * @param keepExtension Whether to keep the extension (default: true)
      * @returns The filename
      * @example getFilename('C:/Users/JohnDoe/Desktop/video.mp4') => 'video.mp4'
      */
-    public static getFilename(filepath: string): string {
-        return path.basename(filepath);
+    public static getFilename(filepath: string, keepExtension: boolean = true): string {
+        const filename = path.basename(filepath);
+        if (keepExtension) return filename;
+        return filename.split('.')[0];
     }
 
     /**

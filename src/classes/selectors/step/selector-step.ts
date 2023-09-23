@@ -5,14 +5,26 @@ import { PipelineStep } from "../../pipeline/pipeline-step";
 import { InputFile } from "../../../types/input-file";
 import { EnumSelectorOutputType } from "../../../enums/enum-selector-output-type";
 import { SelectorResponse } from "../../../types/selector";
+import { parseStepElementParam, parseStepIdParam } from "../../../utils/selector-parser/parse";
 
 type SelectorStepParams = {
     targetId: number;
-    param: 'output' | undefined;
+    targetElement: 'output' | undefined;
 };
 
 @Selector({
-    regexp: /^@step-[0-9]+(?::|$)/
+    regexp: /^@step-[0-9]+(?::|$)/,
+    parser: {
+        errorMessageHeader: `Invalid step selector parameters`,
+        methods: [
+            parseStepIdParam,
+            parseStepElementParam
+        ],
+        options: {
+            includeName: true,
+            maxParams: 1
+        }
+    }
 })
 export class SelectorStep extends PipelineSelector {
 
@@ -26,33 +38,14 @@ export class SelectorStep extends PipelineSelector {
      *   '@step-1:output'
      */
 
+    protected override params!: SelectorStepParams;
+
     constructor(input: string, steps: PipelineStep[]) {
         super(input, steps);
     }
 
-    protected override parseParams(input: string): SelectorStepParams {
-        // Check if input is valid
-        if (!SelectorStep.REGEX.test(input)) throw new Error(`Invalid step selector ${input}`);
-
-        // Split the different parts
-        const inputSections = input.split(':').filter((section) => section.length > 0);
-        if (inputSections.length > 2) throw new Error(`Invalid step selector parameters ${input}. Too many parameters.`);
-
-        // Parse the step id
-        const targetId = Number(inputSections[0].replace('@step-', ''));
-        if (isNaN(targetId)) throw new Error(`Invalid step id ${targetId}`);
-
-        // Parse the step parameter (if any)
-        const param = inputSections.length == 2 ? inputSections[1] : undefined;
-        if (param && param != 'output') {
-            throw new Error(`Invalid step parameter "${param}"`);
-        }
-
-        return { targetId, param } as SelectorStepParams;
-    }
-
     public getExpectedOutputType(): EnumSelectorOutputType {
-        if (this.params.param) return EnumSelectorOutputType.CONTENT_PROMISES;
+        if (this.params.targetElement) return EnumSelectorOutputType.CONTENT_PROMISES;
         return EnumSelectorOutputType.STEP_INSTANCE;
     }
 
@@ -65,7 +58,7 @@ export class SelectorStep extends PipelineSelector {
         }
 
         // If no parameter is specified, return the step instance
-        if (!this.params.param) return {
+        if (!this.params.targetElement) return {
             type: EnumSelectorOutputType.STEP_INSTANCE,
             data: new Promise<PipelineStep>((resolve) => {
                 resolve(associatedStep);

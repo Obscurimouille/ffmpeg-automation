@@ -1,7 +1,6 @@
 import { ClassConstructor } from "class-transformer";
 import { PipelineSelector } from "../../classes/selectors/selector";
 import { SELECTORS } from "../../declaration";
-import { EnumComparator } from "../../enums/enum-comparator";
 
 export class SelectorService {
 

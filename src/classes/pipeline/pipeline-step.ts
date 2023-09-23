@@ -135,6 +135,7 @@ export abstract class PipelineStep {
 
         const selectorClass = SelectorService.resolve(this.archiveOptions.target);
         const selector = new selectorClass(this.archiveOptions.target, this._pipelineSteps, this.id);
+        selector.init();
         if (selector.getExpectedOutputType() !== EnumSelectorOutputType.STEP_INSTANCE) {
             throw new Error(`Invalid archive target for step ${this.id}. The selector must target an instance of a step.`);
         }

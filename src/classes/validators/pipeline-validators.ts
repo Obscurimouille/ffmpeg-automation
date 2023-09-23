@@ -103,6 +103,7 @@ export class ValidFileInputs implements ValidatorConstraintInterface, Parse {
                 let selector;
                 try {
                     selector = new selectorClass(input, []);
+                    selector.init();
                 }
                 catch (error: any) {
                     return { success: false, message: error.message };
@@ -161,6 +162,7 @@ export class ValidSelector implements ValidatorConstraintInterface, Parse {
         // Check if the selector output type is valid
         const selectorClass = SelectorService.resolve(value);
         const selector = new selectorClass(value, []);
+        selector.init();
         const expectedOutputType = selector.getExpectedOutputType();
 
         if (expectedOutputType !== options.expectedType) {

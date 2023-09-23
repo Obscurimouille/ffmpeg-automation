@@ -5,13 +5,20 @@ import { InputFile } from "../../../types/input-file";
 import { StepService } from "../../../services/step/step.service";
 import { EnumSelectorOutputType } from "../../../enums/enum-selector-output-type";
 import { SelectorResponse } from "../../../types/selector";
+import { parseParentElementParam } from "../../../utils/selector-parser/parse";
 
 type SelectorParentParams = {
-    param: 'item' | undefined;
+    targetElement: 'item' | undefined;
 };
 
 @Selector({
-    regexp: /^@parent+(?::|$)/
+    regexp: /^@parent+(?::|$)/,
+    parser: {
+        errorMessageHeader: `Invalid parent selector parameters`,
+        methods: [
+            parseParentElementParam
+        ]
+    }
 })
 export class SelectorParent extends PipelineSelector {
 
@@ -21,33 +28,18 @@ export class SelectorParent extends PipelineSelector {
      * Examples :
      * - Select the parent step
      *   '@parent'
-     * - Select the current element of a parent loop
-     *   '@parent:element'
+     * - Select the current item of a parent loop
+     *   '@parent:item'
      */
+
+    protected override params!: SelectorParentParams;
 
     constructor(input: string, steps: PipelineStep[], clientId: number) {
         super(input, steps, clientId);
     }
 
-    protected override parseParams(input: string): SelectorParentParams {
-        // Check if input is valid
-        if (!SelectorParent.REGEX.test(input)) throw new Error(`Invalid parent selector ${input}`);
-
-        // Split the different parts
-        const inputSections = input.split(':').filter((section) => section.length > 0);
-        if (inputSections.length > 2) throw new Error(`Invalid parent selector parameters ${input}. Too many parameters.`);
-
-        // Parse the parameter
-        const param = inputSections.length == 2 ? inputSections[1] : undefined;
-        if (param && param != 'item') {
-            throw new Error(`Invalid parent selector parameter "${param}"`);
-        }
-
-        return { param } as SelectorParentParams;
-    }
-
     public getExpectedOutputType(): EnumSelectorOutputType {
-        if (this.params.param) return EnumSelectorOutputType.CONTENT_PROMISES;
+        if (this.params.targetElement) return EnumSelectorOutputType.CONTENT_PROMISES;
         return EnumSelectorOutputType.STEP_INSTANCE;
     }
 
@@ -60,7 +52,7 @@ export class SelectorParent extends PipelineSelector {
         }
 
         // If no parameter is specified, return the parent instance
-        if (!this.params.param) return {
+        if (!this.params.targetElement) return {
             type: EnumSelectorOutputType.STEP_INSTANCE,
             data: new Promise<PipelineStep>((resolve) => {
                 resolve(parent);

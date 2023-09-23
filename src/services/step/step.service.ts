@@ -70,6 +70,7 @@ export class StepService {
             const selectorClass = SelectorService.resolve(input);
             // Resolve the selector to get either a string or a string array
             const selector = new selectorClass(input, steps, clientId);
+            selector.init();
             if (selector.getExpectedOutputType() != EnumSelectorOutputType.CONTENT_PROMISES) {
                 throw new Error(`Selector ${input} is incompatible with step input`);
             }
