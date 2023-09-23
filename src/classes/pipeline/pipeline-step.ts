@@ -123,7 +123,7 @@ export abstract class PipelineStep {
      *
      * @param files The list of files to archive
      */
-    private archive(files: string[]): void {
+    private async archive(files: string[]): Promise<void> {
         if (!this.archiveOptions) return;
         const filteredFiles = ArchiveService.filterFiles(files, this.archiveOptions.filter);
 
@@ -139,7 +139,7 @@ export abstract class PipelineStep {
             throw new Error(`Invalid archive target for step ${this.id}. The selector must target an instance of a step.`);
         }
 
-        const target = selector.resolve().data as PipelineStep;
+        const target = (await selector.resolve().data) as PipelineStep;
         target.addExternalOutputFiles(files);
     }
 

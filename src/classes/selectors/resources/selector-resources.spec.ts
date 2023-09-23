@@ -1,4 +1,5 @@
 import { EnumComparator } from "../../../enums/enum-comparator";
+import { EnumFileTypeFilter } from "../../../enums/enum-file-type-filter";
 import { SelectorResources } from "./selector-resources";
 
 describe('resourcesSelector', () => {
@@ -64,4 +65,62 @@ describe('parseDurationParam', () => {
         expect(SelectorResources.parseDurationParam('duration==0')).toBeUndefined();
         expect(SelectorResources.parseDurationParam('duration=>999')).toBeUndefined();
     });
+});
+
+test('filter', async () => {
+    const input1 = await SelectorResources.filter([
+        'folder/foo.mp4',
+        'folder/foo.mp3',
+        'folder/foo.mkv',
+    ], {
+        fileType: EnumFileTypeFilter.ALL,
+    });
+    expect(input1).toStrictEqual([
+        'folder/foo.mp4',
+        'folder/foo.mp3',
+        'folder/foo.mkv',
+    ]);
+
+    const input2 = await SelectorResources.filter([
+        'folder/foo.mp4',
+        'folder/foo.mp3',
+        'folder/foo.mkv',
+    ], {
+        fileType: EnumFileTypeFilter.AUDIOS,
+    });
+    expect(input2).toStrictEqual([
+        'folder/foo.mp3',
+    ]);
+
+    const input3 = await SelectorResources.filter([
+        'folder/foo.mp4',
+        'folder/foo.mkv',
+    ], {
+        fileType: EnumFileTypeFilter.VIDEOS,
+    });
+    expect(input3).toStrictEqual([
+        'folder/foo.mp4',
+        'folder/foo.mkv',
+    ]);
+
+    const input4 = await SelectorResources.filter([
+        'folder/foo.mp4',
+        'folder/foo.mp3',
+        'folder/foo.mkv',
+    ], {
+        extensions: ['mkv', 'mp3'],
+    });
+    expect(input4).toStrictEqual([
+        'folder/foo.mp3',
+        'folder/foo.mkv',
+    ]);
+});
+
+describe('compare', () => {
+    expect(SelectorResources.compare(10, EnumComparator.EQUAL, 10)).toBeTruthy();
+    expect(SelectorResources.compare(10, EnumComparator.GREATER, 9)).toBeTruthy();
+    expect(SelectorResources.compare(10, EnumComparator.GREATER_OR_EQUAL, 10)).toBeTruthy();
+    expect(SelectorResources.compare(10, EnumComparator.GREATER_OR_EQUAL, 9)).toBeTruthy();
+    expect(SelectorResources.compare(10, EnumComparator.LESS, 11)).toBeTruthy();
+    expect(SelectorResources.compare(10, EnumComparator.LESS_OR_EQUAL, 10)).toBeTruthy();
 });

@@ -67,7 +67,9 @@ export class SelectorStep extends PipelineSelector {
         // If no parameter is specified, return the step instance
         if (!this.params.param) return {
             type: EnumSelectorOutputType.STEP_INSTANCE,
-            data: associatedStep
+            data: new Promise<PipelineStep>((resolve) => {
+                resolve(associatedStep);
+            })
         };
 
         // If the parameter is 'output', return the step outputs

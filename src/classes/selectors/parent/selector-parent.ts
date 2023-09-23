@@ -62,7 +62,9 @@ export class SelectorParent extends PipelineSelector {
         // If no parameter is specified, return the parent instance
         if (!this.params.param) return {
             type: EnumSelectorOutputType.STEP_INSTANCE,
-            data: parent
+            data: new Promise<PipelineStep>((resolve) => {
+                resolve(parent);
+            })
         };
 
         // If the parameter is 'item', return step current item
