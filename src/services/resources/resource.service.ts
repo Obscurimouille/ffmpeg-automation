@@ -1,14 +1,31 @@
+import { DEFAULT_CONFIG } from '../../default-config';
 import { FileService } from '../utils/file/file.service';
+import path from "path";
 
 export class ResourceService {
 
-    public static readonly INPUT_DIRECTORY = './resources/input/';
-    public static readonly OUTPUT_DIRECTORY = './resources/output/';
+    public static INPUT_DIRECTORY = DEFAULT_CONFIG.inputDir;
+    public static OUTPUT_DIRECTORY = DEFAULT_CONFIG.outputDir;
 
     public static readonly VIDEO_EXTENSIONS = ['mp4', 'mov', 'avi', 'mkv', 'm4v'];
     public static readonly AUDIO_EXTENSIONS = ['mp3', 'wav', 'ogg', 'm4a'];
     public static readonly ALL_EXTENSIONS = [...ResourceService.VIDEO_EXTENSIONS, ...ResourceService.AUDIO_EXTENSIONS];
 
+    /**
+     * Set the input directory.
+     * @param inputDir The input directory path
+     */
+    public static setInputDirectory(inputDir: string): void {
+        ResourceService.INPUT_DIRECTORY = inputDir;
+    }
+
+    /**
+     * Set the output directory.
+     * @param outputDir The output directory path
+     */
+    public static setOutputDirectory(outputDir: string): void {
+        ResourceService.OUTPUT_DIRECTORY = outputDir;
+    }
 
     /**
      * Check if a file has a video extension.
@@ -56,7 +73,7 @@ export class ResourceService {
     public static archiveFile(file: string): void {
         // Copy the file to the output directory
         const filename = FileService.getFilename(file);
-        const outputFilepath = ResourceService.OUTPUT_DIRECTORY + filename;
+        const outputFilepath = path.join(ResourceService.OUTPUT_DIRECTORY, filename);
         FileService.copyFile(file, outputFilepath);
     }
 

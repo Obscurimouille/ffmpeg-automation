@@ -3,18 +3,6 @@ import fs from 'fs';
 
 export class FileService {
 
-    // /**
-    //  * Rename a filename in a file path.
-    //  * @param filepath The file path
-    //  * @param newFilename The new filename
-    //  * @returns The file path with the new filename
-    //  * @example renameFilename('C:/foo/video.mp4', 'newVideo.mp4') => 'C:/foo/newVideo.mp4'
-    //  */
-    // public static renameFilename(filepath: string, newFilename: string): string {
-    //     const dirpath = path.dirname(filepath);
-    //     return dirpath + '/' + newFilename;
-    // }
-
     /**
      * Get the extension of a file.
      * @param filename The file name
@@ -47,7 +35,7 @@ export class FileService {
 
         for (let filepath of filepaths) {
             const filename = FileService.getFilename(filepath);
-            const newLocation = outputDir + filename;
+            const newLocation = path.join(outputDir, filename);
 
             FileService.copyFile(filepath, newLocation);
             // Update the new value of the input
@@ -79,7 +67,7 @@ export class FileService {
     public static forEachFile(dirpath: string, callback: (filepath: string) => void, recursive: boolean = false): void {
         const files = fs.readdirSync(dirpath);
         for (const file of files) {
-            const filepath = dirpath + file;
+            const filepath = path.join(dirpath, file);
 
             if (!recursive) {
                 callback(filepath);

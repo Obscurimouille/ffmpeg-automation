@@ -5,21 +5,26 @@ import { StepService } from "../../services/step/step.service";
 import { PipelineParser } from "./pipeline-parser";
 import { ResourceService } from "../../services/resources/resource.service";
 import { FileService } from "../../services/utils/file/file.service";
+import { PipelineConfig } from "../../types/pipeline-config";
+import { DEFAULT_CONFIG } from "../../default-config";
+import { PipelineCustomConfig } from "../../types/pipeline-custom-config";
+import { PipelineConfigService } from "../../services/pipeline/pipeline-config.service";
 
 export class Pipeline {
 
+    private config: PipelineConfig;
     private pipelineFile!: string;
-    private model!: PipelineDTO
+    private model!: PipelineDTO;
     private steps: PipelineStep[] = [];
 
     /**
      * Create a new pipeline.
-     * @param filepath The path to the pipeline file to use (default: './resources/pipeline.json')
+     * @param config Custom configuration for the pipeline (optional)
      */
-    constructor(filepath: string) {
-        const pipelineFile = FileService.getFile(filepath);
-        if (!pipelineFile) throw new Error("Error: Could not find pipeline file at " + filepath);
-        this.pipelineFile = pipelineFile;
+    constructor(config?: PipelineCustomConfig) {
+        this.config = { ...DEFAULT_CONFIG, ...config };
+        PipelineConfigService.set(this.config);
+        this.pipelineFile = this.getPipelineFile(this.config.pipelineFile!);
     }
 
     public async init(): Promise<void> {
@@ -27,18 +32,28 @@ export class Pipeline {
         this.model = await parser.run((errorMessage) => {
             throw new Error(`Error: ${errorMessage}`);
         });
+
+        FileService.createDirectory(ResourceService.INPUT_DIRECTORY);
         FileService.createDirectory(ResourceService.OUTPUT_DIRECTORY);
         FileService.createDirectory(WorkspaceService.WORKSPACE_DIRECTORY);
+
         this.steps = StepService.instanciateSteps(this.model.steps);
     }
 
     public async run(): Promise<void> {
         ResourceService.clearOutputDirectory();
         WorkspaceService.clearWorkspace();
+
         StepService.initSteps(this.steps);
         StepService.runSteps(this.steps);
 
         await StepService.waitForSteps(this.steps);
+    }
+
+    private getPipelineFile(location: string): string {
+        const pipelineFile = FileService.getFile(location);
+        if (!pipelineFile) throw new Error("Error: Could not find pipeline file at " + location);
+        return pipelineFile;
     }
 
 }

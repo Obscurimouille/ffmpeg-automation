@@ -5,6 +5,7 @@ import { PipelineStep } from "../../pipeline-step";
 import { StepService } from "../../../../services/step/step.service";
 import { InputFile } from "../../../../types/input-file";
 import { ArchiveDTO } from "../../../dtos/models/archive";
+import path from "path";
 
 /**
  * Split pipeline instruction.
@@ -54,7 +55,7 @@ export class Foreach extends PipelineStatement {
 
     protected override newFilepath(extension: string): string {
         const filename = `${this.id}-loop-output-${++this._outputFileIndex}.${extension}`;
-        return this._workspaceOutputDir + filename;
+        return path.join(this._workspaceOutputDir, filename);
     }
 
 }

@@ -4,6 +4,7 @@ import { FfmpegService } from "../../../../services/ffmpeg/ffmpeg.service";
 import { Instruction } from "../../../../decorators/instruction.decorator";
 import { ArchiveDTO } from "../../../dtos/models/archive";
 import { SyncArgsDTO } from "./sync-args";
+import path from "path";
 
 /**
  * Sync pipeline instruction.
@@ -26,7 +27,7 @@ export class Sync extends PipelineInstruction {
         return new Promise(async (resolve, reject) => {
             // Get variables
             const inputFile = this._inputs[0];
-            const outputFile = this._workspaceOutputDir! + `${this.id}-sync-output.mp4`;
+            const outputFile = path.join(this._workspaceOutputDir!, `${this.id}-sync-output.mp4`);
             const delay = this.args.delay;
 
             const command = FfmpegService.createCommand();
@@ -51,7 +52,7 @@ export class Sync extends PipelineInstruction {
 
     protected override newFilepath(): string {
         const filename = `${this.id}-split-output-${++this._outputFileIndex}.mp4`;
-        return this._workspaceOutputDir + filename;
+        return path.join(this._workspaceOutputDir, filename);
     }
 
 }
