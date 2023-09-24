@@ -11,6 +11,7 @@ import { SelectorResources } from "./classes/selectors/resources/selector-resour
 import { Sync } from "./classes/pipeline/instructions/sync/sync";
 import { Resize } from "./classes/pipeline/instructions/resize/resize";
 import { Speed } from "./classes/pipeline/instructions/speed/speed";
+import { Framerate } from "./classes/pipeline/instructions/framerate/framerate";
 
 export const SELECTORS: ClassConstructor<PipelineSelector>[] = [
     SelectorStep,
@@ -24,6 +25,7 @@ export const INSTRUCTIONS: ClassConstructor<PipelineInstruction>[] = [
     Sync,
     Resize,
     Speed,
+    Framerate,
 ];
 
 export const STATEMENTS: ClassConstructor<PipelineStatement>[] = [
