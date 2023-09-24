@@ -4,7 +4,6 @@ import { ValidationError, isNumber } from 'class-validator';
 import { PipelineDTO } from '../dtos/models/pipeline-dto';
 import { InstructionArgsDTO } from '../dtos/models/args-dto';
 import { PipelineParserService } from '../../services/pipeline/pipeline-parser.service';
-import { logger, pipelineParserLogger } from '../../logger';
 import { StepDTO } from '../dtos/models/step-dto';
 
 type ErrorCallback = (message: string) => void;
@@ -29,7 +28,7 @@ export class PipelineParser {
             pipelineDTO = ClassTransformService.plainToClass(PipelineDTO, json!);
         }
         catch (error: any) {
-            logger.error(error.message);
+            console.error(error.message);
             process.exit(1);
         }
         await ClassTransformService.validate(pipelineDTO, this.handleValidationErrors);
@@ -43,7 +42,7 @@ export class PipelineParser {
 
     private handleValidationErrors(errors: ValidationError[]) {
         for (const error of errors) {
-            pipelineParserLogger.error(PipelineParser.formatValidationError(error));
+            console.error(PipelineParser.formatValidationError(error));
         }
         process.exit(1);
     }
