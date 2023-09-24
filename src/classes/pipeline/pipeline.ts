@@ -32,18 +32,11 @@ export class Pipeline {
         this.model = await parser.run((errorMessage) => {
             throw new Error(`Error: ${errorMessage}`);
         });
-
-        FileService.createDirectory(ResourceService.INPUT_DIRECTORY);
-        FileService.createDirectory(ResourceService.OUTPUT_DIRECTORY);
-        FileService.createDirectory(WorkspaceService.WORKSPACE_DIRECTORY);
-
+        this.initWorkspaceDirectories();
         this.steps = StepService.instanciateSteps(this.model.steps);
     }
 
     public async run(): Promise<void> {
-        ResourceService.clearOutputDirectory();
-        WorkspaceService.clearWorkspace();
-
         StepService.initSteps(this.steps);
         StepService.runSteps(this.steps);
 
@@ -52,8 +45,17 @@ export class Pipeline {
 
     private getPipelineFile(location: string): string {
         const pipelineFile = FileService.getFile(location);
-        if (!pipelineFile) throw new Error("Error: Could not find pipeline file at " + location);
-        return pipelineFile;
+        if (pipelineFile) return pipelineFile;
+        console.error("Could not find any pipeline file at " + location);
+        process.exit(1);
+    }
+
+    private initWorkspaceDirectories(): void {
+        FileService.createDirectory(ResourceService.INPUT_DIRECTORY);
+        FileService.createDirectory(ResourceService.OUTPUT_DIRECTORY);
+        FileService.createDirectory(WorkspaceService.WORKSPACE_DIRECTORY);
+        ResourceService.clearOutputDirectory();
+        WorkspaceService.clearWorkspace();
     }
 
 }
