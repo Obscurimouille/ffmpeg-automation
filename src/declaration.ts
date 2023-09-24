@@ -10,6 +10,7 @@ import { Split } from "./classes/pipeline/instructions/split/split";
 import { SelectorResources } from "./classes/selectors/resources/selector-resources";
 import { Sync } from "./classes/pipeline/instructions/sync/sync";
 import { Resize } from "./classes/pipeline/instructions/resize/resize";
+import { Speed } from "./classes/pipeline/instructions/speed/speed";
 
 export const SELECTORS: ClassConstructor<PipelineSelector>[] = [
     SelectorStep,
@@ -22,6 +23,7 @@ export const INSTRUCTIONS: ClassConstructor<PipelineInstruction>[] = [
     Split,
     Sync,
     Resize,
+    Speed,
 ];
 
 export const STATEMENTS: ClassConstructor<PipelineStatement>[] = [

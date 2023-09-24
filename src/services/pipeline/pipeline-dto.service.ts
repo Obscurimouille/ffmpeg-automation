@@ -11,6 +11,7 @@ import { EnumStatement } from "../../enums/enum-statement";
 import { ForeachDTO } from "../../classes/pipeline/statement/foreach/foreach-model";
 import { SyncDTO } from "../../classes/pipeline/instructions/sync/sync-model";
 import { ResizeDTO } from "../../classes/pipeline/instructions/resize/resize-model";
+import { SpeedDTO } from "../../classes/pipeline/instructions/speed/speed-model";
 
 export class PipelineDTOService {
 
@@ -51,6 +52,8 @@ export class PipelineDTOService {
                 return ClassTransformService.plainToClass(SyncDTO, instruction);
             case EnumInstruction.RESIZE:
                 return ClassTransformService.plainToClass(ResizeDTO, instruction);
+            case EnumInstruction.SPEED:
+                return ClassTransformService.plainToClass(SpeedDTO, instruction);
 
             default: return plainToClass(InstructionDTO, instruction);
         }
