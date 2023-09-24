@@ -12,7 +12,11 @@ import path from "path";
  *  • Input: 1 video file
  *  • Output: 1 video file
  * - Arguments:
- *  •
+ *  • width: The width of the output video. If not specified, the width will be automatically calculated based on the height and aspect ratio.
+ *  • height: The height of the output video. If not specified, the height will be automatically calculated based on the width and aspect ratio.
+ *  • ratio: The ratio of the output video. If not specified, the ratio will be automatically calculated based on the width and height.
+ *  • aspect: The aspect ratio of the output video. If not specified, the aspect ratio will be automatically calculated based on the width and height.
+ *  • pad: Whether to pad the output video to the specified width and height. If not specified, the output video will be padded by default. False to disable padding, true to enable padding with a black background, or a hex color code to enable padding with a custom color (default: true).
  */
 @Instruction({
     identifier: 'resize',
@@ -35,19 +39,11 @@ export class Resize extends PipelineInstruction {
             const enablePad = (pad == undefined) ? true : !!pad;
             const padColor = (pad && typeof pad == 'string') ? pad : 'black';
 
-            console.log("dimensions");
-            console.log(await FfmpegService.getDimensions(inputFile));
-
-            console.log("this.args")
-            console.log(this.args)
-
-            const command = FfmpegService.createCommand();
-
             const targetWidth = width ? String(width) : '?';
             const targetHeight = height ? String(height) : '?';
             const sizeText = ratio ? `${ratio * 100}%` : `${targetWidth}x${targetHeight}`;
-            console.log(sizeText);
 
+            const command = FfmpegService.createCommand();
             command
                 .input(inputFile)
                 .size(sizeText)
