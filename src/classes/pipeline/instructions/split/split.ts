@@ -4,6 +4,7 @@ import { InputFile } from "../../../../types/input-file";
 import { FfmpegService } from "../../../../services/ffmpeg/ffmpeg.service";
 import { Instruction } from "../../../../decorators/instruction.decorator";
 import { ArchiveDTO } from "../../../dtos/models/archive";
+import path from "path";
 
 /**
  * Split pipeline instruction.
@@ -56,7 +57,7 @@ export class Split extends PipelineInstruction {
             // Generate Ffmpeg commands to split the video
             for (let i = 0; i < nbSegments; i++) {
                 const startTime = i * segmentDuration;
-                const outputFile = this._workspaceOutputDir! + `${this.id}-split-output-${i + 1}.mp4`;
+                const outputFile = path.join(this._workspaceOutputDir!, `${this.id}-split-output-${i + 1}.mp4`);
 
                 processes.push(new Promise((resolve, reject) => {
                     const command = FfmpegService.createCommand();
@@ -87,7 +88,7 @@ export class Split extends PipelineInstruction {
 
     protected override newFilepath(): string {
         const filename = `${this.id}-split-output-${++this._outputFileIndex}.mp4`;
-        return this._workspaceOutputDir + filename;
+        return path.join(this._workspaceOutputDir, filename);
     }
 
 }

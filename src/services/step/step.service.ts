@@ -13,12 +13,13 @@ import { ForeachDTO } from '../../classes/pipeline/statement/foreach/foreach-mod
 import { EnumStepStatus } from '../../enums/enum-step-status';
 import { EnumSelectorOutputType } from '../../enums/enum-selector-output-type';
 import { Foreach } from '../../classes/pipeline/statement/foreach/foreach';
+import path from "path";
 import fs from 'fs';
 
 export class StepService {
 
     public static moveInputFilesToWorkspace(inputs: string[], workspaceDir: string): string[] {
-        return FileService.relocateFiles(inputs, workspaceDir + 'input/');
+        return FileService.relocateFiles(inputs, path.join(workspaceDir, 'input'));
     }
 
     /**
@@ -80,13 +81,13 @@ export class StepService {
 
         // The input is a file path
         else {
-            const path = ResourceService.INPUT_DIRECTORY + input;
-            if (!fs.existsSync(path)) {
-                throw new Error(`File ${path} not found`);
+            const filepath = path.join(ResourceService.INPUT_DIRECTORY, input);
+            if (!fs.existsSync(filepath)) {
+                throw new Error(`File ${filepath} not found`);
             }
             // Return the path as a string
             return [new Promise((resolve) => {
-                resolve([path]);
+                resolve([filepath]);
             })];
         }
     }

@@ -10,6 +10,7 @@ import { SelectorService } from "../../services/selector/selector.service";
 import { FileService } from "../../services/utils/file/file.service";
 import { EnumStepStatus } from "../../enums/enum-step-status";
 import { EnumSelectorOutputType } from "../../enums/enum-selector-output-type";
+import path from "path";
 
 export abstract class PipelineStep {
 
@@ -62,7 +63,7 @@ export abstract class PipelineStep {
     public init(pipelineSteps: PipelineStep[]): void {
         // Create a workspace folder
         this._workspaceDir = WorkspaceService.createStepFolder(this.id);
-        this._workspaceOutputDir = this._workspaceDir + 'output/';
+        this._workspaceOutputDir = path.join(this._workspaceDir, 'output');
         this._pipelineSteps = pipelineSteps;
         this.startResolution();
     }

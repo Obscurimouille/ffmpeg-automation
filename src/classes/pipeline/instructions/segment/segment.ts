@@ -4,6 +4,7 @@ import { InputFile } from "../../../../types/input-file";
 import { FfmpegService } from "../../../../services/ffmpeg/ffmpeg.service";
 import { Instruction } from "../../../../decorators/instruction.decorator";
 import { ArchiveDTO } from "../../../dtos/models/archive";
+import path from "path";
 
 /**
  * Segment pipeline instruction.
@@ -27,7 +28,7 @@ export class Segment extends PipelineInstruction {
         return new Promise((resolve, reject) => {
             // Get the input and output file paths
             const inputFile = this._inputs[0];
-            const outputFile = this._workspaceOutputDir! + `${this.id}-segment-output.mp4`;
+            const outputFile = path.join(this._workspaceOutputDir!, `${this.id}-segment-output.mp4`);
             // Generate options
             const options = [`-ss ${this.args.startTime}`];
             if (this.args.duration) options.push(`-t ${this.args.duration}`);
@@ -49,7 +50,7 @@ export class Segment extends PipelineInstruction {
 
     protected override newFilepath(): string {
         const filename = `${this.id}-segement-output.mp4`;
-        return this._workspaceOutputDir + filename;
+        return path.join(this._workspaceOutputDir, filename);
     }
 
 }
