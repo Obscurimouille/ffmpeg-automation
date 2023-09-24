@@ -3,4 +3,5 @@ export enum EnumInstruction {
     SPLIT = "split",
     SYNC = "sync",
     RESIZE = "resize",
+    SPEED = "speed",
 };
