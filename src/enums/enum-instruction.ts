@@ -4,4 +4,5 @@ export enum EnumInstruction {
     SYNC = "sync",
     RESIZE = "resize",
     SPEED = "speed",
+    FRAMERATE = "framerate",
 };

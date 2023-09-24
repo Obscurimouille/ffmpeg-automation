@@ -12,6 +12,7 @@ import { ForeachDTO } from "../../classes/pipeline/statement/foreach/foreach-mod
 import { SyncDTO } from "../../classes/pipeline/instructions/sync/sync-model";
 import { ResizeDTO } from "../../classes/pipeline/instructions/resize/resize-model";
 import { SpeedDTO } from "../../classes/pipeline/instructions/speed/speed-model";
+import { FramerateDTO } from "../../classes/pipeline/instructions/framerate/framerate-model";
 
 export class PipelineDTOService {
 
@@ -54,6 +55,8 @@ export class PipelineDTOService {
                 return ClassTransformService.plainToClass(ResizeDTO, instruction);
             case EnumInstruction.SPEED:
                 return ClassTransformService.plainToClass(SpeedDTO, instruction);
+            case EnumInstruction.FRAMERATE:
+                return ClassTransformService.plainToClass(FramerateDTO, instruction);
 
             default: return plainToClass(InstructionDTO, instruction);
         }
