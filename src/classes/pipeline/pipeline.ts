@@ -8,8 +8,6 @@ import { FileService } from "../../services/utils/file/file.service";
 
 export class Pipeline {
 
-    public static readonly DEFAULT_PIPELINE_PATH = './resources/pipeline.json';
-
     private pipelineFile!: string;
     private model!: PipelineDTO
     private steps: PipelineStep[] = [];
@@ -18,9 +16,9 @@ export class Pipeline {
      * Create a new pipeline.
      * @param filepath The path to the pipeline file to use (default: './resources/pipeline.json')
      */
-    constructor(filepath?: string) {
-        const pipelineFile = FileService.getFile(filepath || Pipeline.DEFAULT_PIPELINE_PATH);
-        if (!pipelineFile) throw new Error("Error: Could not find pipeline file at " + filepath || Pipeline.DEFAULT_PIPELINE_PATH);
+    constructor(filepath: string) {
+        const pipelineFile = FileService.getFile(filepath);
+        if (!pipelineFile) throw new Error("Error: Could not find pipeline file at " + filepath);
         this.pipelineFile = pipelineFile;
     }
 
@@ -29,13 +27,14 @@ export class Pipeline {
         this.model = await parser.run((errorMessage) => {
             throw new Error(`Error: ${errorMessage}`);
         });
-        ResourceService.clearOutputDirectory();
+        FileService.createDirectory(ResourceService.OUTPUT_DIRECTORY);
+        FileService.createDirectory(WorkspaceService.WORKSPACE_DIRECTORY);
         this.steps = StepService.instanciateSteps(this.model.steps);
     }
 
     public async run(): Promise<void> {
+        ResourceService.clearOutputDirectory();
         WorkspaceService.clearWorkspace();
-
         StepService.initSteps(this.steps);
         StepService.runSteps(this.steps);
 

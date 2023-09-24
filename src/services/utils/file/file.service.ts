@@ -135,12 +135,23 @@ export class FileService {
 
     /**
      * Create a directory.
+     * - If the directory already exists, do nothing.
+     * - Create all parent directories if they don't exist.
      * @param dirpath The directory path
      */
     public static createDirectory(dirpath: string): void {
-        if (!FileService.directoryExists(dirpath)) {
-            fs.mkdirSync(dirpath);
+        // Split the directory path into an array of directories
+        const normalizedPath = path.normalize(dirpath);
+        const dirs = normalizedPath.split(path.sep).filter(dir => dir !== '');
+        let currentPath = '';
+        // Loop through each directory and create it if it doesn't exist
+        for (const dir of dirs) {
+            currentPath = path.join(currentPath, dir);
+            if (!FileService.directoryExists(currentPath)) {
+                fs.mkdirSync(currentPath);
+            }
         }
+
     }
 
     /**
