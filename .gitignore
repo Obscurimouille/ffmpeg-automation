@@ -5,6 +5,9 @@
 # Documentation
 /documentation/*.bkp
 
+# IDE
+.vscode
+
 # Logs
 logs
 *.log
