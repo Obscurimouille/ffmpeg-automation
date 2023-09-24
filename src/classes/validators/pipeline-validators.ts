@@ -1,4 +1,4 @@
-import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, isArray, isNumber } from "class-validator";
+import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, isArray, isNumber, isHexColor } from "class-validator";
 import { EnumInstruction } from "../../enums/enum-instruction";
 import { UtilsService } from "../../services/utils/utils";
 import { EnumStatement } from "../../enums/enum-statement";
@@ -215,6 +215,60 @@ export class Optional implements ValidatorConstraintInterface, Parse {
             }
         }
 
+        return { success: true };
+    }
+
+    validate(value: any, args: ValidationArguments): boolean {
+        const { success } = this.parse(value, args);
+        return success;
+    }
+
+    defaultMessage(args: ValidationArguments) {
+        const { message } = this.parse(args.value, args);
+        return message || '';
+    }
+}
+
+/**
+ * 
+ */
+@ValidatorConstraint()
+export class ValidAspectRatio implements ValidatorConstraintInterface, Parse {
+
+    parse(value: any, args: ValidationArguments): ParseResult {
+        if (value === undefined) return { success: false, message: `aspect-ratio is not defined!` };
+        if (typeof value != 'string') return { success: false, message: `aspect-ratio must be a string` };
+
+        const regex = /^\d+:\d+$/;
+        if (!regex.test(value)) return { success: false, message: `invalid aspect-ratio!` };
+
+        return { success: true };
+    }
+
+    validate(value: any, args: ValidationArguments): boolean {
+        const { success } = this.parse(value, args);
+        return success;
+    }
+
+    defaultMessage(args: ValidationArguments) {
+        const { message } = this.parse(args.value, args);
+        return message || '';
+    }
+}
+
+/**
+ * Validate if the parameter pad is valid.
+ * - The pad must be a boolean or a string
+ * - If the pad is a string, it must be a valid hex color
+ */
+@ValidatorConstraint()
+export class ValidPad implements ValidatorConstraintInterface, Parse {
+
+    parse(value: any, args: ValidationArguments): ParseResult {
+        if (value === undefined) return { success: false, message: `pad is not defined!` };
+        if (typeof value == 'boolean') return { success: true };
+        if (typeof value != 'string') return { success: false, message: `pad must be a boolean or a string` };
+        if (!isHexColor(value)) return { success: false, message: `invalid pad color!` };
         return { success: true };
     }
 

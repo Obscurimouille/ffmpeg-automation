@@ -19,6 +19,8 @@ import path from "path";
 })
 export class Sync extends PipelineInstruction {
 
+    override args!: SyncArgsDTO;
+
     constructor(id: number, args: SyncArgsDTO, archive?: ArchiveDTO) {
         super(id, Sync.IDENTIFIER, args, archive);
     }
@@ -51,7 +53,7 @@ export class Sync extends PipelineInstruction {
     }
 
     protected override newFilepath(): string {
-        const filename = `${this.id}-split-output-${++this._outputFileIndex}.mp4`;
+        const filename = `${this.id}-sync-output-${++this._outputFileIndex}.mp4`;
         return path.join(this._workspaceOutputDir, filename);
     }
 

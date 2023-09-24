@@ -24,6 +24,8 @@ import path from "path";
 })
 export class Split extends PipelineInstruction {
 
+    override args!: SplitArgsDTO;
+
     constructor(id: number, args: SplitArgsDTO, archive?: ArchiveDTO) {
         super(id, Split.IDENTIFIER, args, archive);
     }
@@ -44,7 +46,7 @@ export class Split extends PipelineInstruction {
             }
 
             let segmentDuration = this.args.segmentDuration;
-            let nbSegments = this.args.nbSegments;
+            let nbSegments = this.args.nbSegments!;
 
             if (!segmentDuration && !nbSegments) {
                 throw new Error(`Error: You must specify either the duration of each segment or the number of segments`);

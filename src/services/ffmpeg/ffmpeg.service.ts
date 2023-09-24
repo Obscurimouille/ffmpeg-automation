@@ -1,6 +1,7 @@
 import ffmpeg from 'fluent-ffmpeg';
 import pathToFfmpeg from 'ffmpeg-static';
 import { FfmpegCommandObject } from '../../types/ffmpeg';
+import { Dimensions } from '../../types/dimensions';
 
 export class FfmpegService {
 
@@ -34,9 +35,23 @@ export class FfmpegService {
             ffmpeg.ffprobe(file, (err, data) => {
                 if (err) {
                     if (onError) onError(err);
-                    resolve(undefined);
+                    return resolve(undefined);
                 }
-                else resolve(data.format.duration);
+                resolve(data.format.duration);
+            });
+        });
+    }
+
+    public static getDimensions(file: string, onError?: (error: any) => void): Promise<Dimensions | undefined> {
+        return new Promise((resolve, reject) => {
+            ffmpeg.ffprobe(file, (err, data) => {
+                if (err) {
+                    if (onError) onError(err);
+                    return resolve(undefined);
+                }
+                const width = data.streams[0].width || 0;
+                const height = data.streams[0].height || 0;
+                resolve({ width, height });
             });
         });
     }

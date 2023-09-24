@@ -20,6 +20,8 @@ import path from "path";
 })
 export class Segment extends PipelineInstruction {
 
+    override args!: SegmentArgsDTO;
+
     constructor(id: number, args: SegmentArgsDTO, archive?: ArchiveDTO) {
         super(id, Segment.IDENTIFIER, args, archive);
     }
