@@ -35,7 +35,6 @@ export class Pipeline {
     public async run(): Promise<void> {
         ResourceService.clearOutputDirectory();
         WorkspaceService.clearWorkspace();
-
         StepService.initSteps(this.steps);
         StepService.runSteps(this.steps);
 
