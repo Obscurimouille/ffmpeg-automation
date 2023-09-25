@@ -11,10 +11,12 @@ import { FileService } from "../../services/utils/file/file.service";
 import { EnumStepStatus } from "../../enums/enum-step-status";
 import { EnumSelectorOutputType } from "../../enums/enum-selector-output-type";
 import path from "path";
+import { StepDTO } from "../dtos/models/step-dto";
 
 export abstract class PipelineStep {
 
     public static readonly IDENTIFIER: string;
+    public static readonly DTO_MODEL: StepDTO;
 
     public type!: EnumStepType;
     public name!: string;

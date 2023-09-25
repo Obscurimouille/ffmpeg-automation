@@ -1,11 +1,11 @@
 import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, isArray, isNumber, isHexColor } from "class-validator";
 import { EnumInstruction } from "../../enums/enum-instruction";
-import { UtilsService } from "../../services/utils/utils";
 import { EnumStatement } from "../../enums/enum-statement";
 import { FileService } from "../../services/utils/file/file.service";
 import { SelectorService } from "../../services/selector/selector.service";
 import { PipelineParserService } from "../../services/pipeline/pipeline-parser.service";
 import { ResourceService } from "../../services/resources/resource.service";
+import { ValidateService } from "../../services/validate/validate.service";
 
 interface Parse {
     parse(value: any, args: ValidationArguments): ParseResult;
@@ -23,7 +23,7 @@ type ParseResult = {
 @ValidatorConstraint()
 export class ValidStepName implements ValidatorConstraintInterface {
     validate(value: any): boolean {
-        return UtilsService.isPartOfEnum(value, EnumInstruction) || UtilsService.isPartOfEnum(value, EnumStatement);
+        return ValidateService.isPartOfEnum(value, EnumInstruction) || ValidateService.isPartOfEnum(value, EnumStatement);
     }
 
     defaultMessage(args: ValidationArguments) {
@@ -46,9 +46,8 @@ export class ValidId implements ValidatorConstraintInterface, Parse {
         if (value <= 0) return { success: false, message: `id must be a positive number!` };
 
         // Check if the id is already used
-        const parserService = PipelineParserService.getInstance();
-        if (parserService.isIdAlreadyUsed(value)) return { success: false, message: `id ${value} is already used!` };
-        parserService.addValidateId(value);
+        if (PipelineParserService.isIdAlreadyUsed(value)) return { success: false, message: `id ${value} is already used!` };
+        PipelineParserService.addValidateId(value);
 
         return { success: true };
     }
@@ -111,8 +110,7 @@ export class ValidFileInputs implements ValidatorConstraintInterface, Parse {
 
                 const params = selector.getParams();
                 if (params.targetId !== undefined) {
-                    const parserService = PipelineParserService.getInstance();
-                    if (!parserService.isIdAlreadyUsed(params.targetId)) {
+                    if (!PipelineParserService.isIdAlreadyUsed(params.targetId)) {
                         return { success: false, message: `step ${params.targetId} does not exist!` };
                     }
                 }
@@ -230,7 +228,7 @@ export class Optional implements ValidatorConstraintInterface, Parse {
 }
 
 /**
- * 
+ *
  */
 @ValidatorConstraint()
 export class ValidAspectRatio implements ValidatorConstraintInterface, Parse {

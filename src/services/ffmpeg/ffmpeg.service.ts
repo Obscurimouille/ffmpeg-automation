@@ -1,10 +1,12 @@
 import ffmpeg from 'fluent-ffmpeg';
 import pathToFfmpeg from 'ffmpeg-static';
-import { FfmpegCommandObject } from '../../types/ffmpeg';
 import { Dimensions } from '../../types/dimensions';
 
 export class FfmpegService {
 
+    /**
+     * Initialize ffmpeg.
+     */
     public static init(): void {
         // Check if ffmpeg is installed
         if (!pathToFfmpeg) {
@@ -14,45 +16,55 @@ export class FfmpegService {
         ffmpeg.setFfmpegPath(pathToFfmpeg);
     }
 
-    public static createCommand(): FfmpegCommandObject {
+    /**
+     * Create a new ffmpeg command.
+     */
+    public static createCommand(): ffmpeg.FfmpegCommand {
         return ffmpeg();
     }
 
-    public static probe(file: string, onError?: (error: any) => void): Promise<ffmpeg.FfprobeData> {
+    /**
+     * Get the data of an audio or video file.
+     * @param file The path to the audio or video file
+     * @param onError A callback function to handle errors
+     * @returns Asyncronously returns the data of the audio or video
+     */
+    public static getData(file: string, onError?: (error: any) => void): Promise<ffmpeg.FfprobeData> {
         return new Promise((resolve, reject) => {
             ffmpeg.ffprobe(file, (err, data) => {
                 if (err) {
                     if (onError) onError(err);
-                    resolve({} as ffmpeg.FfprobeData);
+                    return resolve({} as ffmpeg.FfprobeData);
                 }
-                else resolve(data);
+                resolve(data);
             });
         });
     }
 
+    /**
+     * Get the duration of an audio or video file.
+     * @param file The path to the audio or video file
+     * @param onError A callback function to handle errors
+     * @returns Asyncronously returns the duration in seconds of the audio or video
+     */
     public static getDuration(file: string, onError?: (error: any) => void): Promise<number | undefined> {
-        return new Promise((resolve, reject) => {
-            ffmpeg.ffprobe(file, (err, data) => {
-                if (err) {
-                    if (onError) onError(err);
-                    return resolve(undefined);
-                }
-                resolve(data.format.duration);
-            });
+        return new Promise(async (resolve, reject) => {
+            const data = await FfmpegService.getData(file, onError);
+            resolve(data?.format?.duration);
         });
     }
 
-    public static getDimensions(file: string, onError?: (error: any) => void): Promise<Dimensions | undefined> {
-        return new Promise((resolve, reject) => {
-            ffmpeg.ffprobe(file, (err, data) => {
-                if (err) {
-                    if (onError) onError(err);
-                    return resolve(undefined);
-                }
-                const width = data.streams[0].width || 0;
-                const height = data.streams[0].height || 0;
-                resolve({ width, height });
-            });
+    /**
+     * Get the dimensions of a video file.
+     * @param file The path to the video file
+     * @param onError A callback function to handle errors
+     * @returns Asyncronously returns the width and height of the video
+     */
+    public static getDimensions(file: string, onError?: (error: any) => void): Promise<Partial<Dimensions>> {
+        return new Promise(async (resolve, reject) => {
+            const data = await FfmpegService.getData(file, onError);
+            const { width, height } = data.streams[0];
+            resolve({ width, height });
         });
     }
 }

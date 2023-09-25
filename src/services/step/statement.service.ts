@@ -2,6 +2,7 @@ import { ClassConstructor } from "class-transformer";
 import { PipelineStatement } from "../../classes/pipeline/statement/pipeline-statement";
 import { StatementDTO } from "../../classes/dtos/models/statement-dto";
 import { STATEMENTS } from "../../declaration";
+import { ClassTransformService } from "../plain-to-class/plain-to-class.service";
 
 export class StatementService {
 
@@ -21,10 +22,12 @@ export class StatementService {
      * @param name The statement name to resolve
      * @returns The statement class
      */
-    public static resolveModel(name: string): ClassConstructor<StatementDTO> {
+    public static resolveDTOModel(name: string): ClassConstructor<StatementDTO> {
         const statementClass = STATEMENTS.find((statement: ClassConstructor<PipelineStatement>) => name == (statement as any).IDENTIFIER);
         if (!statementClass) throw new Error(`Statement ${name} not found`);
-        return (statementClass as any).DTO;
+        return (statementClass as any).DTO_MODEL;
     }
+
+
 
 }

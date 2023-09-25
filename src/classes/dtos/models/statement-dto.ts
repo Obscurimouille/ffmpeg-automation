@@ -3,6 +3,7 @@ import { IsDefined, IsEnum, ValidateNested } from "class-validator";
 import { StatementArgsDTO } from "./args-dto";
 import { StepDTO } from "./step-dto";
 import { EnumStatement } from "../../../enums/enum-statement";
+import 'reflect-metadata';
 
 export class StatementDTO extends StepDTO {
 

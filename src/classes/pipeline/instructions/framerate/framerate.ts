@@ -5,6 +5,7 @@ import { Instruction } from "../../../../decorators/instruction.decorator";
 import { ArchiveDTO } from "../../../dtos/models/archive";
 import { FramerateArgsDTO } from "./framerate-args";
 import path from "path";
+import { FramerateDTO } from "./framerate-model";
 
 /**
  * Framerate pipeline instruction.
@@ -16,9 +17,10 @@ import path from "path";
  */
 @Instruction({
     identifier: 'framerate',
+    dtoModel: FramerateDTO,
 })
 export class Framerate extends PipelineInstruction {
-
+    
     override args!: FramerateArgsDTO;
 
     constructor(id: number, args: FramerateArgsDTO, archive?: ArchiveDTO) {

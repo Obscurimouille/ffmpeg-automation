@@ -4,6 +4,7 @@ import { InstructionArgsDTO } from "./args-dto";
 import { StepDTO } from "./step-dto";
 import { EnumInstruction } from "../../../enums/enum-instruction";
 import { ArchiveDTO } from "./archive";
+import 'reflect-metadata';
 
 export class InstructionDTO extends StepDTO {
 

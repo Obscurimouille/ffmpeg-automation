@@ -5,6 +5,7 @@ import { Instruction } from "../../../../decorators/instruction.decorator";
 import { ArchiveDTO } from "../../../dtos/models/archive";
 import { SpeedArgsDTO } from "./speed-args";
 import path from "path";
+import { SpeedDTO } from "./speed-model";
 
 /**
  * Speed pipeline instruction.
@@ -16,6 +17,7 @@ import path from "path";
  */
 @Instruction({
     identifier: 'speed',
+    dtoModel: SpeedDTO,
 })
 export class Speed extends PipelineInstruction {
 

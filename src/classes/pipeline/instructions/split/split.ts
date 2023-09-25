@@ -5,6 +5,7 @@ import { FfmpegService } from "../../../../services/ffmpeg/ffmpeg.service";
 import { Instruction } from "../../../../decorators/instruction.decorator";
 import { ArchiveDTO } from "../../../dtos/models/archive";
 import path from "path";
+import { SplitDTO } from "./split-model";
 
 /**
  * Split pipeline instruction.
@@ -21,6 +22,7 @@ import path from "path";
  */
 @Instruction({
     identifier: 'split',
+    dtoModel: SplitDTO,
 })
 export class Split extends PipelineInstruction {
 
@@ -35,11 +37,7 @@ export class Split extends PipelineInstruction {
             const inputFile = this._inputs[0];
             const processes: Promise<InputFile[]>[] = [];
 
-            const metadata = await FfmpegService.probe(inputFile, (err) => {
-                throw new Error(`Error: ${err}`);
-            });
-
-            let totalDuration = metadata.format.duration;
+            let totalDuration = await FfmpegService.getDuration(inputFile);
 
             if (!totalDuration) {
                 throw new Error(`Error: Could not determine the duration of the input video`);

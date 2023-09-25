@@ -5,6 +5,7 @@ import { Instruction } from "../../../../decorators/instruction.decorator";
 import { ArchiveDTO } from "../../../dtos/models/archive";
 import { ResizeArgsDTO } from "./resize-args";
 import path from "path";
+import { SegmentDTO } from "../segment/segment-model";
 
 /**
  * Resize pipeline instruction.
@@ -20,6 +21,7 @@ import path from "path";
  */
 @Instruction({
     identifier: 'resize',
+    dtoModel: SegmentDTO,
 })
 export class Resize extends PipelineInstruction {
 

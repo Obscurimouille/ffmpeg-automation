@@ -1,4 +1,4 @@
-export class UtilsService {
+export class ValidateService {
 
     /**
      * Try to pass the given function.
