@@ -4,7 +4,7 @@ import { WorkspaceService } from "../workspace/workspace.service";
 
 export class PipelineConfigService {
 
-    public static set(config: PipelineConfig): void {
+    public static set(config: Required<PipelineConfig>): void {
         ResourceService.setInputDirectory(config.inputDir);
         ResourceService.setOutputDirectory(config.outputDir);
 

@@ -7,12 +7,11 @@ import { ResourceService } from "../../services/resources/resource.service";
 import { FileService } from "../../services/utils/file/file.service";
 import { PipelineConfig } from "../../types/pipeline-config";
 import { DEFAULT_CONFIG } from "../../default-config";
-import { PipelineCustomConfig } from "../../types/pipeline-custom-config";
 import { PipelineConfigService } from "../../services/pipeline/pipeline-config.service";
 
 export class Pipeline {
 
-    private config: PipelineConfig;
+    private config: Required<PipelineConfig>;
     private pipelineFile!: string;
     private model!: PipelineDTO;
     private steps: PipelineStep[] = [];
@@ -21,7 +20,7 @@ export class Pipeline {
      * Create a new pipeline.
      * @param config Custom configuration for the pipeline (optional)
      */
-    constructor(config?: PipelineCustomConfig) {
+    constructor(config?: PipelineConfig) {
         this.config = { ...DEFAULT_CONFIG, ...config };
         PipelineConfigService.set(this.config);
         this.pipelineFile = this.getPipelineFile(this.config.pipelineFile!);

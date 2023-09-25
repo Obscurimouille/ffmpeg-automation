@@ -21,10 +21,10 @@ export class InstructionService {
      * @param name The instruction name to resolve
      * @returns The instruction class
      */
-    public static resolveModel(name: string): ClassConstructor<InstructionDTO> {
+    public static resolveDTOModel(name: string): ClassConstructor<InstructionDTO> {
         const instructionClass = INSTRUCTIONS.find((instruction: ClassConstructor<PipelineInstruction>) => name == (instruction as any).IDENTIFIER);
         if (!instructionClass) throw new Error(`Instruction ${name} not found`);
-        return (instructionClass as any).DTO;
+        return (instructionClass as any).DTO_MODEL;
     }
 
 }

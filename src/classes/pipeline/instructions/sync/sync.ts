@@ -5,6 +5,7 @@ import { Instruction } from "../../../../decorators/instruction.decorator";
 import { ArchiveDTO } from "../../../dtos/models/archive";
 import { SyncArgsDTO } from "./sync-args";
 import path from "path";
+import { SyncDTO } from "./sync-model";
 
 /**
  * Sync pipeline instruction.
@@ -16,6 +17,7 @@ import path from "path";
  */
 @Instruction({
     identifier: 'sync',
+    dtoModel: SyncDTO,
 })
 export class Sync extends PipelineInstruction {
 

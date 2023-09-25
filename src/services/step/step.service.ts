@@ -1,10 +1,10 @@
 import { StepDTO } from '../../classes/dtos/models/step-dto';
 import { PipelineStep } from '../../classes/pipeline/pipeline-step';
 import { EnumStepType } from '../../enums/enum-step-type';
-import { InstructionService } from '../instruction/instruction.service';
+import { InstructionService } from './instruction.service';
 import { ResourceService } from '../resources/resource.service';
 import { SelectorService } from '../selector/selector.service';
-import { StatementService } from '../statement/statement.service';
+import { StatementService } from './statement.service';
 import { FileService } from '../utils/file/file.service';
 import { InstructionDTO } from '../../classes/dtos/models/instruction-dto';
 import { InputFile } from '../../types/input-file';

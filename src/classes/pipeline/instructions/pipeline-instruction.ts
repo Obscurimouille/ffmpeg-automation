@@ -4,6 +4,7 @@ import { EnumStepType } from "../../../enums/enum-step-type";
 import { InstructionArgsDTO } from "../../dtos/models/args-dto";
 import { InputFile } from "../../../types/input-file";
 import { ArchiveDTO } from "../../dtos/models/archive";
+import { InstructionDTO } from "../../dtos/models/instruction-dto";
 
 /**
  * A pipeline instruction.
@@ -11,6 +12,7 @@ import { ArchiveDTO } from "../../dtos/models/archive";
 export abstract class PipelineInstruction extends PipelineStep {
 
     public static override readonly IDENTIFIER: EnumInstruction;
+    public static override readonly DTO_MODEL: InstructionDTO;
 
     constructor(id: number, name: string, args: InstructionArgsDTO, archive?: ArchiveDTO) {
         super(id, EnumStepType.INSTRUCTION, name, args, archive);

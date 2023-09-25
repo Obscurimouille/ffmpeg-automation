@@ -4,6 +4,7 @@ import { EnumStatement } from "../../../enums/enum-statement";
 import { StatementArgsDTO } from "../../dtos/models/args-dto";
 import { InputFile } from "../../../types/input-file";
 import { ArchiveDTO } from "../../dtos/models/archive";
+import { StatementDTO } from "../../dtos/models/statement-dto";
 
 /**
  * A pipeline statement.
@@ -11,6 +12,7 @@ import { ArchiveDTO } from "../../dtos/models/archive";
 export abstract class PipelineStatement extends PipelineStep {
 
     public static override readonly IDENTIFIER: EnumStatement;
+    public static override readonly DTO_MODEL: StatementDTO;
 
     /* -------------------------------------------------------------------------- */
 

@@ -5,6 +5,7 @@ import { FfmpegService } from "../../../../services/ffmpeg/ffmpeg.service";
 import { Instruction } from "../../../../decorators/instruction.decorator";
 import { ArchiveDTO } from "../../../dtos/models/archive";
 import path from "path";
+import { SegmentDTO } from "./segment-model";
 
 /**
  * Segment pipeline instruction.
@@ -17,6 +18,7 @@ import path from "path";
  */
 @Instruction({
     identifier: 'segment',
+    dtoModel: SegmentDTO,
 })
 export class Segment extends PipelineInstruction {
 

@@ -6,6 +6,7 @@ import { StepService } from "../../../../services/step/step.service";
 import { InputFile } from "../../../../types/input-file";
 import { ArchiveDTO } from "../../../dtos/models/archive";
 import path from "path";
+import { ForeachDTO } from "./foreach-model";
 
 /**
  * Split pipeline instruction.
@@ -22,6 +23,7 @@ import path from "path";
  */
 @Statement({
     identifier: 'foreach',
+    dtoModel: ForeachDTO,
 })
 export class Foreach extends PipelineStatement {
 
