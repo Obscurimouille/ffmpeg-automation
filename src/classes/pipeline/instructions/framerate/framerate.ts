@@ -20,7 +20,7 @@ import { FramerateDTO } from "./framerate-model";
     dtoModel: FramerateDTO,
 })
 export class Framerate extends PipelineInstruction {
-    
+
     override args!: FramerateArgsDTO;
 
     constructor(id: number, args: FramerateArgsDTO, archive?: ArchiveDTO) {

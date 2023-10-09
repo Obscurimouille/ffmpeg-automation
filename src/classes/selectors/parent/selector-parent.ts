@@ -5,7 +5,7 @@ import { InputFile } from "../../../types/input-file";
 import { StepService } from "../../../services/step/step.service";
 import { EnumSelectorOutputType } from "../../../enums/enum-selector-output-type";
 import { SelectorResponse } from "../../../types/selector";
-import { parseParentElementParam } from "../../../utils/selector-parser/parse";
+import { parseParentElementParam } from "../../../modules/selector-parser/parse";
 
 type SelectorParentParams = {
     targetElement: 'item' | undefined;

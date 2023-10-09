@@ -1,6 +1,6 @@
 import { Expose } from "class-transformer";
 import { IsDefined, IsNumber, Validate } from "class-validator";
-import { ValidFileInputs } from "../../../validators/pipeline-validators";
+import { ValidFileInputs } from "../../../../modules/validators/pipeline-validators";
 import { InstructionArgsDTO } from "../../../dtos/models/args-dto";
 import { InputFile } from "../../../../types/input-file";
 

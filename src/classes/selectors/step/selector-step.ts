@@ -5,7 +5,7 @@ import { PipelineStep } from "../../pipeline/pipeline-step";
 import { InputFile } from "../../../types/input-file";
 import { EnumSelectorOutputType } from "../../../enums/enum-selector-output-type";
 import { SelectorResponse } from "../../../types/selector";
-import { parseStepElementParam, parseStepIdParam } from "../../../utils/selector-parser/parse";
+import { parseStepElementParam, parseStepIdParam } from "../../../modules/selector-parser/parse";
 
 type SelectorStepParams = {
     targetId: number;

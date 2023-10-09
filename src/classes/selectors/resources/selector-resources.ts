@@ -6,8 +6,8 @@ import { SelectorResponse } from "../../../types/selector";
 import { ResourceService } from "../../../services/resources/resource.service";
 import { EnumFileTypeFilter } from "../../../enums/enum-file-type-filter";
 import { EnumComparator } from "../../../enums/enum-comparator";
-import { parseDurationParam, parseExtensionsParam, parseFileTypeParam, parseFilenameRegexParam } from "../../../utils/selector-parser/parse";
-import { filter } from "../../../utils/selector-parser/filter";
+import { parseDurationParam, parseExtensionsParam, parseFileTypeParam, parseFilenameRegexParam } from "../../../modules/selector-parser/parse";
+import { filter } from "../../../modules/selector-parser/filter";
 
 type SelectorResourcesParams = {
     fileType?: EnumFileTypeFilter;

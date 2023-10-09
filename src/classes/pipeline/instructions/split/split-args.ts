@@ -1,6 +1,6 @@
 import { Expose } from "class-transformer";
 import { Validate } from "class-validator";
-import { Optional, ValidFileInputs } from "../../../validators/pipeline-validators";
+import { Optional, ValidFileInputs } from "../../../../modules/validators/pipeline-validators";
 import { InstructionArgsDTO } from "../../../dtos/models/args-dto";
 import { InputFile } from "../../../../types/input-file";
 

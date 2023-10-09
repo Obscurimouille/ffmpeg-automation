@@ -1,6 +1,6 @@
 import { Expose } from "class-transformer";
 import { IsHexColor, IsNumber, IsOptional, IsPositive, IsString, Max, Min, Validate } from "class-validator";
-import { Optional, ValidAspectRatio, ValidFileInputs, ValidPad } from "../../../validators/pipeline-validators";
+import { Optional, ValidAspectRatio, ValidFileInputs, ValidPad } from "../../../../modules/validators/pipeline-validators";
 import { InstructionArgsDTO } from "../../../dtos/models/args-dto";
 import { InputFile } from "../../../../types/input-file";
 

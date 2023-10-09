@@ -1,6 +1,6 @@
 import { Expose } from "class-transformer";
 import { IsDefined, IsEnum, Validate, ValidateNested } from "class-validator";
-import { ValidId, ValidStepName } from "../../validators/pipeline-validators";
+import { ValidId, ValidStepName } from "../../../modules/validators/pipeline-validators";
 import { EnumInstruction } from "../../../enums/enum-instruction";
 import { EnumStatement } from "../../../enums/enum-statement";
 import { EnumStepType } from "../../../enums/enum-step-type";
